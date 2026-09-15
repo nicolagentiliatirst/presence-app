@@ -60,21 +60,23 @@
   // 2) Incolla qui la configurazione web del progetto.
   // 3) Per una demo semplice, usa le regole indicate nel README.
   const firebaseConfig = {
-    apiKey: "INCOLLA_API_KEY",
-    authDomain: "INCOLLA_AUTH_DOMAIN",
-    databaseURL: "INCOLLA_DATABASE_URL",
-    projectId: "INCOLLA_PROJECT_ID",
-    storageBucket: "INCOLLA_STORAGE_BUCKET",
-    messagingSenderId: "INCOLLA_MESSAGING_SENDER_ID",
-    appId: "INCOLLA_APP_ID"
+    apiKey: "AIzaSyAXwSeqdBNpCeUr_RbNddtPQhVrT_zwXRI",
+    authDomain: "stanzavirtuale-2026.firebaseapp.com",
+    databaseURL: "https://stanzavirtuale-2026-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "stanzavirtuale-2026",
+    storageBucket: "stanzavirtuale-2026.firebasestorage.app",
+    messagingSenderId: "294515975716",
+    appId: "1:294515975716:web:2c25b7500c315cb6ffdab1",
+    measurementId: "G-CBTQG0ZVKL"
   };
+
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { getDatabase, ref, set, onValue, remove, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
   const $ = id => document.getElementById(id);
   let db = null, meRef = null, stopWatch = null;
-  const configured = !firebaseConfig.apiKey.startsWith('https://stanzavirtuale-2026-default-rtdb.europe-west1.firebasedatabase.app/');
+  const configured = !firebaseConfig.apiKey.startsWith('INCOLLA_');
   $('connBadge').textContent = configured ? 'configurato' : 'configurazione Firebase richiesta';
 
   function normRoom(s){return (s||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,24)}
