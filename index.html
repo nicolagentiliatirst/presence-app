@@ -74,7 +74,7 @@
 
   const $ = id => document.getElementById(id);
   let db = null, meRef = null, stopWatch = null;
-  const configured = !firebaseConfig.apiKey.startsWith('https://console.firebase.google.com/project/stanzavirtuale-2026/database/stanzavirtuale-2026-default-rtdb/data/~2F');
+  const configured = !firebaseConfig.apiKey.startsWith('https://stanzavirtuale-2026-default-rtdb.europe-west1.firebasedatabase.app/');
   $('connBadge').textContent = configured ? 'configurato' : 'configurazione Firebase richiesta';
 
   function normRoom(s){return (s||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,24)}
