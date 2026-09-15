@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ci siamo?</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--text:#f8fafc;--accent:#14b8a6;--ok:#22c55e;--off:#64748b;--danger:#ef4444;--line:#1f2937}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(135deg,#0f172a,#111827 60%,#0b1324);color:var(--text);min-height:100vh}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 50px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px}.brand{font-weight:800;font-size:clamp(26px,4vw,42px)}.badge{padding:8px 12px;border:1px solid #334155;border-radius:999px;color:#cbd5e1;font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:780px){.grid{grid-template-columns:1fr}}
+    .card{background:rgba(17,24,39,.92);border:1px solid #233044;border-radius:20px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+    h2{margin:0 0 14px;font-size:20px} label{display:block;color:#cbd5e1;font-size:13px;margin:12px 0 6px} input,button{font:inherit}
+    input{width:100%;background:#0b1220;border:1px solid #334155;color:#fff;padding:12px 14px;border-radius:12px;outline:none} input:focus{border-color:var(--accent)}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#042f2e}.ghost{background:#1e293b;color:#e2e8f0}.ok{background:var(--ok);color:#052e16}.off{background:#334155;color:#e2e8f0}.danger{background:#7f1d1d;color:#fee2e2}
+    .statusbox{display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:16px;background:#0b1220;border:1px solid #1f2937;margin-top:14px}.dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;background:var(--off)}.dot.on{background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.12)}
+    .big{font-size:42px;font-weight:800;line-height:1}.sub{color:var(--muted);font-size:13px;margin-top:6px}.list{margin-top:12px;display:grid;gap:8px;max-height:420px;overflow:auto}.person{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;background:#0b1220;border:1px solid #1f2937}.name{font-weight:700}.small{font-size:12px;color:var(--muted)}
+    .pill{padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}.pill.on{background:rgba(34,197,94,.15);color:#86efac}.pill.off{background:#1e293b;color:#cbd5e1}
+    .hidden{display:none!important}.footer{margin-top:18px;color:#64748b;font-size:12px;text-align:center}.adminlink{color:#5eead4;cursor:pointer;text-decoration:underline}.notice{margin-top:10px;color:#fbbf24;font-size:13px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="brand">Ci siamo?</div><div class="badge" id="connBadge">non connesso</div></div>
+
+  <div class="grid">
+    <section class="card" id="joinCard">
+      <h2>Entra nella stanza</h2>
+      <label>Codice stanza</label><input id="room" placeholder="es. AI2409" autocomplete="off" />
+      <label>Nickname</label><input id="nick" placeholder="es. Radiohead42" autocomplete="off" />
+      <div class="btnrow"><button class="btn primary" id="joinBtn">Entra</button></div>
+      <div class="notice">Nessun account richiesto. Usa un nickname, non servono dati personali.</div>
+    </section>
+
+    <section class="card hidden" id="participantCard">
+      <h2 id="hello">Ciao</h2>
+      <div class="statusbox"><div><span class="dot" id="myDot"></span><b id="myStatus">Assente</b><div class="sub" id="myRoom"></div></div></div>
+      <div class="btnrow">
+        <button class="btn ok" id="presentBtn">Sono presente</button>
+        <button class="btn off" id="awayBtn">Mi assento</button>
+      </div>
+      <div class="sub" style="margin-top:14px">Puoi lasciare questa pagina aperta e cambiare stato con un solo click.</div>
+    </section>
+
+    <section class="card" id="dashboardCard">
+      <h2>Dashboard docente</h2>
+      <div class="big"><span id="presentCount">0</span>/<span id="totalCount">0</span></div>
+      <div class="sub">presenti / registrati nella stanza</div>
+      <label>Codice stanza da osservare</label><input id="adminRoom" placeholder="es. AI2409" autocomplete="off" />
+      <div class="btnrow"><button class="btn ghost" id="watchBtn">Osserva</button><button class="btn danger" id="resetBtn">Reset stanza</button></div>
+      <div class="list" id="peopleList"></div>
+    </section>
+  </div>
+
+  <div class="footer">Prototipo per GitHub Pages + Firebase Realtime Database</div>
+</div>
+
+<script type="module">
+  // 1) Crea un progetto Firebase e una Realtime Database.
+  // 2) Incolla qui la configurazione web del progetto.
+  // 3) Per una demo semplice, usa le regole indicate nel README.
+  const firebaseConfig = {
+    apiKey: "INCOLLA_API_KEY",
+    authDomain: "INCOLLA_AUTH_DOMAIN",
+    databaseURL: "INCOLLA_DATABASE_URL",
+    projectId: "INCOLLA_PROJECT_ID",
+    storageBucket: "INCOLLA_STORAGE_BUCKET",
+    messagingSenderId: "INCOLLA_MESSAGING_SENDER_ID",
+    appId: "INCOLLA_APP_ID"
+  };
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue, remove, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+  const $ = id => document.getElementById(id);
+  let db = null, meRef = null, stopWatch = null;
+  const configured = !firebaseConfig.apiKey.startsWith('https://console.firebase.google.com/project/stanzavirtuale-2026/database/stanzavirtuale-2026-default-rtdb/data/~2F');
+  $('connBadge').textContent = configured ? 'configurato' : 'configurazione Firebase richiesta';
+
+  function normRoom(s){return (s||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,24)}
+  function normNick(s){return (s||'').trim().replace(/[.#$\[\]/]/g,'').slice(0,32)}
+  function participantKey(nick){return btoa(unescape(encodeURIComponent(nick))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')}
+  function requireDb(){ if(!configured){ alert('Prima configura Firebase nel file index.html. Vedi README.md'); return false } if(!db){ const app=initializeApp(firebaseConfig); db=getDatabase(app); $('connBadge').textContent='connesso'; } return true }
+
+  const q = new URLSearchParams(location.search); if(q.get('room')) { $('room').value=q.get('room'); $('adminRoom').value=q.get('room'); }
+  const savedRoom=localStorage.getItem('presence_room'), savedNick=localStorage.getItem('presence_nick'); if(savedRoom&&!$('room').value) $('room').value=savedRoom; if(savedNick) $('nick').value=savedNick;
+
+  $('joinBtn').onclick = async () => {
+    if(!requireDb()) return;
+    const room=normRoom($('room').value), nick=normNick($('nick').value); if(!room||!nick){alert('Inserisci stanza e nickname.');return}
+    localStorage.setItem('presence_room',room); localStorage.setItem('presence_nick',nick);
+    meRef=ref(db, `rooms/${room}/participants/${participantKey(nick)}`);
+    await set(meRef,{nick,status:'away',updatedAt:serverTimestamp()});
+    onDisconnect(meRef).update?.({status:'away',updatedAt:serverTimestamp()});
+    $('joinCard').classList.add('hidden'); $('participantCard').classList.remove('hidden'); $('hello').textContent=`Ciao, ${nick}`; $('myRoom').textContent=`Stanza ${room}`;
+    onValue(meRef,s=>{const v=s.val(); const on=v?.status==='present'; $('myDot').className='dot'+(on?' on':''); $('myStatus').textContent=on?'Presente':'Assente';});
+    if(!$('adminRoom').value) $('adminRoom').value=room;
+  };
+
+  async function setStatus(status){ if(!meRef||!requireDb()) return; const snapNick=normNick($('nick').value); await set(meRef,{nick:snapNick,status,updatedAt:serverTimestamp()}); }
+  $('presentBtn').onclick=()=>setStatus('present'); $('awayBtn').onclick=()=>setStatus('away');
+
+  function renderPeople(obj){ const vals=Object.values(obj||{}).sort((a,b)=> (b.status==='present')-(a.status==='present') || a.nick.localeCompare(b.nick)); const present=vals.filter(v=>v.status==='present').length; $('presentCount').textContent=present; $('totalCount').textContent=vals.length; $('peopleList').innerHTML=''; for(const p of vals){ const el=document.createElement('div'); el.className='person'; el.innerHTML=`<div><div class="name"></div><div class="small">${p.updatedAt?'stato aggiornato':''}</div></div><span class="pill ${p.status==='present'?'on':'off'}">${p.status==='present'?'Presente':'Assente'}</span>`; el.querySelector('.name').textContent=p.nick; $('peopleList').appendChild(el); } }
+  $('watchBtn').onclick=()=>{ if(!requireDb()) return; const room=normRoom($('adminRoom').value); if(!room){alert('Inserisci il codice stanza.');return} if(stopWatch) stopWatch(); const r=ref(db,`rooms/${room}/participants`); stopWatch=onValue(r,s=>renderPeople(s.val())); };
+  $('resetBtn').onclick=async()=>{ if(!requireDb()) return; const room=normRoom($('adminRoom').value); if(!room) return; if(confirm(`Cancellare tutti i partecipanti della stanza ${room}?`)) await remove(ref(db,`rooms/${room}`)); };
+</script>
+</body>
+</html>
