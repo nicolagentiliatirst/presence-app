@@ -57,6 +57,7 @@
     .hidden{display:none!important}
     .footer{margin-top:18px;color:#64748b;font-size:12px;text-align:center}
     .notice{margin-top:10px;color:#fbbf24;font-size:13px}
+    .errornotice{margin-top:12px;color:#fecaca;background:rgba(127,29,29,.28);border:1px solid #7f1d1d;border-radius:12px;padding:10px 12px;font-size:13px}
     .timer{font-size:clamp(48px,10vw,88px);font-weight:900;letter-spacing:-.04em;line-height:1;margin:12px 0}
     .timer.ended{font-size:clamp(28px,5vw,44px);letter-spacing:-.02em}
     .timerline{padding:18px;border-radius:18px;background:#08131f;border:1px solid #1f2937;text-align:center;margin-top:14px}
@@ -96,36 +97,26 @@
         <input id="room" placeholder="es. AI2409" autocomplete="off" />
         <label>Nickname</label>
         <input id="nick" placeholder="es. Radiohead42" autocomplete="off" />
-        <div class="btnrow">
-          <button class="btn primary" id="joinBtn">Entra</button>
-        </div>
+        <div class="btnrow"><button class="btn primary" id="joinBtn">Entra</button></div>
         <div class="notice">Nessun account visibile. Usa un nickname: non servono dati personali.</div>
       </section>
 
       <section class="card hidden" id="participantCard">
         <h2 id="hello">Ciao</h2>
         <div class="roomtitle" id="participantRoomTitle"></div>
-
         <div class="statusbox">
-          <div>
-            <span class="dot" id="myDot"></span>
-            <b id="myStatus">Assente</b>
-            <div class="sub" id="myRoom"></div>
-          </div>
+          <div><span class="dot" id="myDot"></span><b id="myStatus">Assente</b><div class="sub" id="myRoom"></div></div>
         </div>
-
         <div class="btnrow">
           <button class="btn ok" id="presentBtn">Sono presente</button>
           <button class="btn off hidden" id="awayBtn">Mi assento</button>
           <button class="btn ghost" id="renameBtn">Cambia nome</button>
         </div>
-
         <div class="inline-edit hidden" id="renameBox">
           <input id="renameInput" maxlength="32" autocomplete="off" placeholder="Nuovo nickname" />
           <button class="btn primary" id="saveRenameBtn">Salva</button>
           <button class="btn ghost" id="cancelRenameBtn">Annulla</button>
         </div>
-
         <div class="timerline hidden" id="participantTimerBox">
           <div class="sub" id="participantTimerLabel">La pausa termina tra</div>
           <div class="timer" id="participantTimer">00:00</div>
@@ -138,12 +129,11 @@
   <div id="teacherMode" class="hidden">
     <section class="card" id="teacherLoginCard" style="max-width:520px">
       <h2>Accesso docente</h2>
-
       <div class="btnrow">
         <button class="btn primary" id="teacherLoginBtn">Accedi con Google</button>
       </div>
-
       <div class="notice">Accesso riservato ai docenti autorizzati.</div>
+      <div class="errornotice hidden" id="teacherAuthError"></div>
     </section>
 
     <div class="teacher-grid hidden" id="teacherWorkspace">
@@ -153,43 +143,31 @@
         <div class="list" id="roomsList"></div>
 
         <div class="sep"></div>
-
         <h3>Crea nuova stanza</h3>
         <label>Codice stanza</label>
         <input id="newRoomCode" placeholder="es. AI2409" autocomplete="off" />
-
         <label>Titolo opzionale</label>
         <input id="newRoomTitle" placeholder="es. Introduzione all’AI" autocomplete="off" />
-
-        <div class="btnrow">
-          <button class="btn primary" id="createRoomBtn">Crea stanza</button>
-        </div>
+        <div class="btnrow"><button class="btn primary" id="createRoomBtn">Crea stanza</button></div>
 
         <div class="sep"></div>
-
         <button class="btn ghost" id="teacherLogoutBtn">Esci</button>
       </section>
 
       <section class="card" id="roomControlCard">
         <h2>Stanza selezionata</h2>
-
-        <div class="mutedbox" id="noRoomSelected">
-          Seleziona una stanza dalla colonna di sinistra.
-        </div>
+        <div class="mutedbox" id="noRoomSelected">Seleziona una stanza dalla colonna di sinistra.</div>
 
         <div id="roomControlContent" class="hidden">
           <div class="sub" id="selectedRoomCode"></div>
-
           <label>Titolo</label>
           <input id="selectedRoomTitle" maxlength="80" />
-
           <div class="btnrow">
             <button class="btn primary" id="saveRoomTitleBtn">Salva titolo</button>
             <button class="btn danger" id="archiveRoomBtn">Archivia stanza</button>
           </div>
 
           <div class="sep"></div>
-
           <h3>Link partecipanti</h3>
           <div class="copybox">
             <input id="shareLink" readonly />
@@ -197,46 +175,24 @@
           </div>
 
           <div class="sep"></div>
-
           <h3>Statistiche temporali</h3>
           <div class="stats">
-            <div class="stat">
-              <div class="stat-label">Creazione / apertura</div>
-              <div class="stat-value" id="statCreatedAt">—</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Primo ingresso</div>
-              <div class="stat-value" id="statFirstEntry">—</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Tempo complessivo</div>
-              <div class="stat-value" id="statTotalTime">—</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Tempo attivo</div>
-              <div class="stat-value" id="statActiveTime">—</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Tempo in pausa</div>
-              <div class="stat-value" id="statPauseTime">—</div>
-            </div>
-            <div class="stat">
-              <div class="stat-label">Stato</div>
-              <div class="stat-value" id="statRoomStatus">—</div>
-            </div>
+            <div class="stat"><div class="stat-label">Creazione / apertura</div><div class="stat-value" id="statCreatedAt">—</div></div>
+            <div class="stat"><div class="stat-label">Primo ingresso</div><div class="stat-value" id="statFirstEntry">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo complessivo</div><div class="stat-value" id="statTotalTime">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo attivo</div><div class="stat-value" id="statActiveTime">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo in pausa</div><div class="stat-value" id="statPauseTime">—</div></div>
+            <div class="stat"><div class="stat-label">Stato</div><div class="stat-value" id="statRoomStatus">—</div></div>
           </div>
 
           <div class="sep"></div>
-
           <h3>Pausa</h3>
           <label>Durata (minuti)</label>
           <input id="breakMinutes" type="number" min="1" max="90" value="15" />
-
           <div class="btnrow">
             <button class="btn warn" id="startBreakBtn">Avvia pausa</button>
             <button class="btn ghost" id="endBreakBtn">Termina pausa</button>
           </div>
-
           <div class="timerline hidden" id="teacherTimerBox">
             <div class="sub">Tempo rimanente</div>
             <div class="timer" id="teacherTimer">00:00</div>
@@ -247,63 +203,36 @@
 
       <section class="card participants-col" id="dashboardCard">
         <h2>Partecipanti</h2>
-
-        <div class="mutedbox" id="participantsPlaceholder">
-          Seleziona una stanza per visualizzare i partecipanti.
-        </div>
+        <div class="mutedbox" id="participantsPlaceholder">Seleziona una stanza per visualizzare i partecipanti.</div>
 
         <div id="participantsContent" class="hidden">
-          <div class="big">
-            <span id="presentCount">0</span>/<span id="totalCount">0</span>
-          </div>
-
+          <div class="big"><span id="presentCount">0</span>/<span id="totalCount">0</span></div>
           <div class="sub">presenti / registrati</div>
-
-          <div class="notice hidden" id="allBackNotice">
-            Tutti i partecipanti registrati sono rientrati.
-          </div>
-
+          <div class="notice hidden" id="allBackNotice">Tutti i partecipanti registrati sono rientrati.</div>
           <div class="list" id="peopleList"></div>
-
           <div class="sep"></div>
-
           <button class="btn danger" id="resetBtn">Reset partecipanti</button>
         </div>
       </section>
     </div>
   </div>
 
-  <div class="footer">
-    GitHub Pages + Firebase Authentication + Realtime Database · v2.4
-  </div>
+  <div class="footer">GitHub Pages + Firebase Authentication + Realtime Database · v2.5</div>
 </div>
 
 <script type="module">
   import { firebaseConfig } from "./firebase-config.js";
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
   import {
-    getDatabase,
-    ref,
-    set,
-    update,
-    get,
-    onValue,
-    remove,
-    serverTimestamp,
-    onDisconnect
+    getDatabase, ref, set, update, get, onValue, remove,
+    serverTimestamp, onDisconnect
   } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
   import {
-    getAuth,
-    signInAnonymously,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
+    getAuth, signInAnonymously, GoogleAuthProvider,
+    signInWithPopup, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
   const $ = id => document.getElementById(id);
@@ -312,1287 +241,565 @@
     firebaseConfig?.apiKey &&
     !firebaseConfig.apiKey.startsWith("INCOLLA_");
 
-  let app = null;
-  let db = null;
-  let auth = null;
-
+  let app=null, db=null, auth=null;
   const googleProvider = new GoogleAuthProvider();
-  googleProvider.setCustomParameters({
-    prompt: "select_account"
-  });
+  googleProvider.setCustomParameters({ prompt: "select_account" });
 
-  let meRef = null;
-  let activeParticipantRoom = null;
-  let activeParticipantNick = "";
+  let meRef=null, activeParticipantRoom=null, activeParticipantNick="";
+  let participantStop=null, participantMetaStop=null, participantConnectionStop=null;
+  let roomsStop=null, teacherPeopleStop=null, teacherMetaStop=null;
+  let activeTeacherRoom=null, activeTeacherMeta=null, activeTeacherPeople={}, roomsCache={};
+  let participantTimerInterval=null, teacherTimerInterval=null, teacherStatsInterval=null, roomsRenderInterval=null;
+  let serverTimeOffsetMs=0;
 
-  let participantStop = null;
-  let participantMetaStop = null;
-  let participantConnectionStop = null;
-
-  let roomsStop = null;
-  let teacherPeopleStop = null;
-  let teacherMetaStop = null;
-
-  let activeTeacherRoom = null;
-  let activeTeacherMeta = null;
-  let activeTeacherPeople = {};
-  let roomsCache = {};
-
-  let participantTimerInterval = null;
-  let teacherTimerInterval = null;
-  let teacherStatsInterval = null;
-  let roomsRenderInterval = null;
-
-  let serverTimeOffsetMs = 0;
-
-  function initFirebase() {
-    if (!configured) {
-      $("connBadge").textContent = "configurazione Firebase richiesta";
+  function initFirebase(){
+    if(!configured){
+      $("connBadge").textContent="configurazione Firebase richiesta";
       return false;
     }
-
-    if (!app) {
-      app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      auth = getAuth(app);
-
-      $("connBadge").textContent = "Firebase pronto";
-
-      onValue(
-        ref(db, ".info/serverTimeOffset"),
-        snap => {
-          serverTimeOffsetMs = Number(snap.val()) || 0;
-        }
-      );
+    if(!app){
+      app=initializeApp(firebaseConfig);
+      db=getDatabase(app);
+      auth=getAuth(app);
+      $("connBadge").textContent="Firebase pronto";
+      onValue(ref(db,".info/serverTimeOffset"),snap=>{
+        serverTimeOffsetMs=Number(snap.val())||0;
+      });
     }
-
     return true;
   }
 
-  function normRoom(s) {
-    return (s || "")
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9_-]/g, "")
-      .slice(0, 24);
-  }
+  function normRoom(s){return (s||"").trim().toUpperCase().replace(/[^A-Z0-9_-]/g,"").slice(0,24)}
+  function normNick(s){return (s||"").trim().replace(/[.#$\[\]/]/g,"").slice(0,32)}
+  function roomLink(room){return `${location.origin}${location.pathname}?room=${encodeURIComponent(room)}`}
+  function serverNow(){return Date.now()+serverTimeOffsetMs}
+  function stopInterval(id){if(id)clearInterval(id);return null}
+  function fmtCountdown(ms){const t=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(t/60).toString().padStart(2,"0")}:${(t%60).toString().padStart(2,"0")}`}
+  function fmtDateTime(ts){if(!ts||typeof ts!=="number")return "—";return new Intl.DateTimeFormat("it-IT",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date(ts))}
+  function fmtDuration(ms){if(ms==null||!Number.isFinite(ms)||ms<0)return "—";const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${h}h ${m}m ${sec}s`:`${m}m ${sec}s`}
+  function roomStatus(meta){if(!meta)return "—";if(meta.archived===true)return "Archiviata";if(meta.breakEndsAt&&meta.breakEndsAt>serverNow())return "In pausa";return "Attiva"}
+  function roomStatusClass(meta){if(meta?.archived)return "archived";if(meta?.breakEndsAt&&meta.breakEndsAt>serverNow())return "pause";return "on"}
 
-  function normNick(s) {
-    return (s || "")
-      .trim()
-      .replace(/[.#$\[\]/]/g, "")
-      .slice(0, 32);
-  }
-
-  function roomLink(room) {
-    return `${location.origin}${location.pathname}?room=${encodeURIComponent(room)}`;
-  }
-
-  function serverNow() {
-    return Date.now() + serverTimeOffsetMs;
-  }
-
-  function stopInterval(id) {
-    if (id) clearInterval(id);
-    return null;
-  }
-
-  function fmtCountdown(ms) {
-    const t = Math.max(0, Math.ceil(ms / 1000));
-    return `${Math.floor(t / 60)
-      .toString()
-      .padStart(2, "0")}:${(t % 60).toString().padStart(2, "0")}`;
-  }
-
-  function fmtDateTime(ts) {
-    if (!ts || typeof ts !== "number") return "—";
-
-    return new Intl.DateTimeFormat("it-IT", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    }).format(new Date(ts));
-  }
-
-  function fmtDuration(ms) {
-    if (ms == null || !Number.isFinite(ms) || ms < 0) return "—";
-
-    const s = Math.floor(ms / 1000);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-
-    return h > 0
-      ? `${h}h ${m}m ${sec}s`
-      : `${m}m ${sec}s`;
-  }
-
-  function roomStatus(meta) {
-    if (!meta) return "—";
-    if (meta.archived === true) return "Archiviata";
-    if (meta.breakEndsAt && meta.breakEndsAt > serverNow()) return "In pausa";
-    return "Attiva";
-  }
-
-  function roomStatusClass(meta) {
-    if (meta?.archived) return "archived";
-    if (meta?.breakEndsAt && meta.breakEndsAt > serverNow()) return "pause";
-    return "on";
-  }
-
-  async function ensureAnonymous() {
-    if (!initFirebase()) return null;
-
-    if (auth.currentUser?.isAnonymous) {
-      return auth.currentUser;
-    }
-
-    if (auth.currentUser && !auth.currentUser.isAnonymous) {
-      await signOut(auth);
-    }
-
-    const cred = await signInAnonymously(auth);
-    $("connBadge").textContent = "connesso";
-
+  async function ensureAnonymous(){
+    if(!initFirebase())return null;
+    if(auth.currentUser?.isAnonymous)return auth.currentUser;
+    if(auth.currentUser&&!auth.currentUser.isAnonymous)await signOut(auth);
+    const cred=await signInAnonymously(auth);
+    $("connBadge").textContent="connesso";
     return cred.user;
   }
 
-  function switchMode(mode) {
-    const participant = mode === "participant";
-
-    $("participantMode").classList.toggle("hidden", !participant);
-    $("teacherMode").classList.toggle("hidden", participant);
-
-    $("participantModeBtn").className =
-      `btn ${participant ? "primary" : "ghost"}`;
-
-    $("teacherModeBtn").className =
-      `btn ${participant ? "ghost" : "primary"}`;
+  function switchMode(mode){
+    const p=mode==="participant";
+    $("participantMode").classList.toggle("hidden",!p);
+    $("teacherMode").classList.toggle("hidden",p);
+    $("participantModeBtn").className=`btn ${p?"primary":"ghost"}`;
+    $("teacherModeBtn").className=`btn ${p?"ghost":"primary"}`;
   }
 
-  $("participantModeBtn").onclick = () => switchMode("participant");
-  $("teacherModeBtn").onclick = () => switchMode("teacher");
+  $("participantModeBtn").onclick=()=>switchMode("participant");
+  $("teacherModeBtn").onclick=()=>switchMode("teacher");
 
-  const q = new URLSearchParams(location.search);
-  const linkedRoom = normRoom(q.get("room"));
-
-  if (linkedRoom) {
-    $("room").value = linkedRoom;
+  const q=new URLSearchParams(location.search),linkedRoom=normRoom(q.get("room"));
+  if(linkedRoom){
+    $("room").value=linkedRoom;
     document.querySelector(".tabs").classList.add("hidden");
     switchMode("participant");
   }
 
-  const savedRoom = localStorage.getItem("presence_room");
-  const savedNick = localStorage.getItem("presence_nick");
+  const savedRoom=localStorage.getItem("presence_room"),savedNick=localStorage.getItem("presence_nick");
+  if(savedRoom&&!$("room").value)$("room").value=savedRoom;
+  if(savedNick)$("nick").value=savedNick;
 
-  if (savedRoom && !$("room").value) {
-    $("room").value = savedRoom;
-  }
-
-  if (savedNick) {
-    $("nick").value = savedNick;
-  }
-
-  async function armDisconnect() {
-    if (!meRef) return;
-
-    try {
-      const current = (await get(meRef)).val();
-
+  async function armDisconnect(){
+    if(!meRef)return;
+    try{
+      const current=(await get(meRef)).val();
       await onDisconnect(meRef).set({
-        nick: activeParticipantNick,
-        status: "away",
-        updatedAt: serverTimestamp(),
-        joinedAt: current?.joinedAt || serverNow()
+        nick:activeParticipantNick,
+        status:"away",
+        updatedAt:serverTimestamp(),
+        joinedAt:current?.joinedAt||serverNow()
       });
-    } catch (err) {
-      console.warn("onDisconnect:", err);
-    }
+    }catch(err){console.warn("onDisconnect:",err)}
   }
 
-  $("joinBtn").onclick = async () => {
-    try {
-      const room = normRoom($("room").value);
-      const nick = normNick($("nick").value);
+  $("joinBtn").onclick=async()=>{
+    try{
+      const room=normRoom($("room").value),nick=normNick($("nick").value);
+      if(!room||!nick){alert("Inserisci stanza e nickname.");return}
 
-      if (!room || !nick) {
-        alert("Inserisci stanza e nickname.");
-        return;
-      }
+      const user=await ensureAnonymous();
+      if(!user)return;
 
-      const user = await ensureAnonymous();
-      if (!user) return;
-
-      const meta = (
-        await get(ref(db, `rooms/${room}/meta`))
-      ).val();
-
-      if (
-        !meta ||
-        meta.archived === true ||
-        meta.isOpen !== true
-      ) {
+      const meta=(await get(ref(db,`rooms/${room}/meta`))).val();
+      if(!meta||meta.archived===true||meta.isOpen!==true){
         alert("La stanza non esiste oppure non è disponibile.");
         return;
       }
 
-      const existing = (
-        await get(
-          ref(db, `rooms/${room}/participants/${user.uid}`)
-        )
-      ).val();
+      const existing=(await get(ref(db,`rooms/${room}/participants/${user.uid}`))).val();
+      const joinedAt=existing?.joinedAt||serverNow();
 
-      const joinedAt =
-        existing?.joinedAt || serverNow();
+      activeParticipantRoom=room;
+      activeParticipantNick=nick;
+      localStorage.setItem("presence_room",room);
+      localStorage.setItem("presence_nick",nick);
 
-      activeParticipantRoom = room;
-      activeParticipantNick = nick;
+      meRef=ref(db,`rooms/${room}/participants/${user.uid}`);
 
-      localStorage.setItem("presence_room", room);
-      localStorage.setItem("presence_nick", nick);
-
-      meRef = ref(
-        db,
-        `rooms/${room}/participants/${user.uid}`
-      );
-
-      await set(meRef, {
+      await set(meRef,{
         nick,
-        status: "present",
-        updatedAt: serverTimestamp(),
+        status:"present",
+        updatedAt:serverTimestamp(),
         joinedAt
       });
 
       $("joinCard").classList.add("hidden");
       $("participantCard").classList.remove("hidden");
+      $("hello").textContent=`Ciao, ${nick}`;
+      $("myRoom").textContent=`Stanza ${room}`;
+      $("participantRoomTitle").textContent=meta.title||"";
 
-      $("hello").textContent = `Ciao, ${nick}`;
-      $("myRoom").textContent = `Stanza ${room}`;
-      $("participantRoomTitle").textContent =
-        meta.title || "";
-
-      if (participantStop) participantStop();
-
-      participantStop = onValue(meRef, snap => {
-        const value = snap.val();
-        const present =
-          value?.status === "present";
-
-        if (value?.nick) {
-          activeParticipantNick = value.nick;
-          $("hello").textContent =
-            `Ciao, ${value.nick}`;
+      if(participantStop)participantStop();
+      participantStop=onValue(meRef,snap=>{
+        const v=snap.val(),present=v?.status==="present";
+        if(v?.nick){
+          activeParticipantNick=v.nick;
+          $("hello").textContent=`Ciao, ${v.nick}`;
         }
-
-        $("myDot").className =
-          "dot" + (present ? " on" : "");
-
-        $("myStatus").textContent =
-          present ? "Presente" : "Assente";
-
-        $("presentBtn").classList.toggle(
-          "hidden",
-          present
-        );
-
-        $("awayBtn").classList.toggle(
-          "hidden",
-          !present
-        );
+        $("myDot").className="dot"+(present?" on":"");
+        $("myStatus").textContent=present?"Presente":"Assente";
+        $("presentBtn").classList.toggle("hidden",present);
+        $("awayBtn").classList.toggle("hidden",!present);
       });
 
-      if (participantConnectionStop) {
-        participantConnectionStop();
-      }
+      if(participantConnectionStop)participantConnectionStop();
+      participantConnectionStop=onValue(ref(db,".info/connected"),async snap=>{
+        const connected=snap.val()===true;
+        $("connBadge").textContent=connected?"connesso":"riconnessione...";
+        if(connected&&meRef)await armDisconnect();
+      });
 
-      participantConnectionStop = onValue(
-        ref(db, ".info/connected"),
-        async snap => {
-          const connected = snap.val() === true;
-
-          $("connBadge").textContent =
-            connected
-              ? "connesso"
-              : "riconnessione...";
-
-          if (connected && meRef) {
-            await armDisconnect();
-          }
-        }
-      );
-
-      if (participantMetaStop) {
-        participantMetaStop();
-      }
-
-      participantMetaStop = onValue(
-        ref(db, `rooms/${room}/meta`),
-        snap => {
-          const metaValue = snap.val();
-
-          const disabled =
-            !metaValue ||
-            metaValue.archived === true ||
-            metaValue.isOpen !== true;
-
-          $("presentBtn").disabled = disabled;
-          $("awayBtn").disabled = disabled;
-          $("renameBtn").disabled = disabled;
-
-          if (metaValue) {
-            $("participantRoomTitle").textContent =
-              metaValue.title || "";
-          }
-
-          renderParticipantTimer(
-            metaValue?.breakEndsAt || null
-          );
-
-          if (disabled) {
-            $("participantTimerNote").textContent =
-              "La stanza è stata archiviata dal docente.";
-          }
-        }
-      );
-    } catch (err) {
+      if(participantMetaStop)participantMetaStop();
+      participantMetaStop=onValue(ref(db,`rooms/${room}/meta`),snap=>{
+        const m=snap.val();
+        const disabled=!m||m.archived===true||m.isOpen!==true;
+        $("presentBtn").disabled=disabled;
+        $("awayBtn").disabled=disabled;
+        $("renameBtn").disabled=disabled;
+        if(m)$("participantRoomTitle").textContent=m.title||"";
+        renderParticipantTimer(m?.breakEndsAt||null);
+        if(disabled)$("participantTimerNote").textContent="La stanza è stata archiviata dal docente.";
+      });
+    }catch(err){
       console.error(err);
       alert(`Errore: ${err.message}`);
     }
   };
 
-  async function setStatus(status) {
-    if (!meRef) return;
-
-    const old =
-      (await get(meRef)).val() || {};
-
-    await set(meRef, {
-      nick: activeParticipantNick,
+  async function setStatus(status){
+    if(!meRef)return;
+    const old=(await get(meRef)).val()||{};
+    await set(meRef,{
+      nick:activeParticipantNick,
       status,
-      updatedAt: serverTimestamp(),
-      joinedAt: old.joinedAt || serverNow()
+      updatedAt:serverTimestamp(),
+      joinedAt:old.joinedAt||serverNow()
     });
-
     await armDisconnect();
   }
 
-  $("presentBtn").onclick =
-    () => setStatus("present");
+  $("presentBtn").onclick=()=>setStatus("present");
+  $("awayBtn").onclick=()=>setStatus("away");
 
-  $("awayBtn").onclick =
-    () => setStatus("away");
-
-  $("renameBtn").onclick = () => {
-    $("renameInput").value =
-      activeParticipantNick;
-
+  $("renameBtn").onclick=()=>{
+    $("renameInput").value=activeParticipantNick;
     $("renameBox").classList.remove("hidden");
     $("renameInput").focus();
   };
-
-  $("cancelRenameBtn").onclick = () => {
-    $("renameBox").classList.add("hidden");
-  };
-
-  $("saveRenameBtn").onclick = async () => {
-    const nick =
-      normNick($("renameInput").value);
-
-    if (!nick) {
-      alert("Inserisci un nickname valido.");
-      return;
-    }
-
-    const old =
-      (await get(meRef)).val() || {};
-
-    activeParticipantNick = nick;
-
-    localStorage.setItem(
-      "presence_nick",
-      nick
-    );
-
-    $("nick").value = nick;
-
-    await set(meRef, {
-      ...old,
-      nick,
-      updatedAt: serverTimestamp()
-    });
-
+  $("cancelRenameBtn").onclick=()=>$("renameBox").classList.add("hidden");
+  $("saveRenameBtn").onclick=async()=>{
+    const nick=normNick($("renameInput").value);
+    if(!nick){alert("Inserisci un nickname valido.");return}
+    const old=(await get(meRef)).val()||{};
+    activeParticipantNick=nick;
+    localStorage.setItem("presence_nick",nick);
+    $("nick").value=nick;
+    await set(meRef,{...old,nick,updatedAt:serverTimestamp()});
     await armDisconnect();
-
     $("renameBox").classList.add("hidden");
   };
 
-  function renderParticipantTimer(end) {
-    participantTimerInterval =
-      stopInterval(participantTimerInterval);
-
-    if (!end) {
+  function renderParticipantTimer(end){
+    participantTimerInterval=stopInterval(participantTimerInterval);
+    if(!end){
       $("participantTimerBox").classList.add("hidden");
       return;
     }
-
     $("participantTimerBox").classList.remove("hidden");
-
-    const tick = () => {
-      const rem = end - serverNow();
-
-      if (rem > 0) {
-        $("participantTimerLabel").textContent =
-          "La pausa termina tra";
-
+    const tick=()=>{
+      const rem=end-serverNow();
+      if(rem>0){
+        $("participantTimerLabel").textContent="La pausa termina tra";
         $("participantTimer").classList.remove("ended");
-
-        $("participantTimer").textContent =
-          fmtCountdown(rem);
-
-        $("participantTimerNote").textContent =
-          "Quando rientri, premi “Sono presente”.";
-      } else {
-        $("participantTimerLabel").textContent = "";
-
+        $("participantTimer").textContent=fmtCountdown(rem);
+        $("participantTimerNote").textContent="Quando rientri, premi “Sono presente”.";
+      }else{
+        $("participantTimerLabel").textContent="";
         $("participantTimer").classList.add("ended");
-
-        $("participantTimer").textContent =
-          "Pausa terminata";
-
-        $("participantTimerNote").textContent =
-          "Segnala il tuo rientro.";
+        $("participantTimer").textContent="Pausa terminata";
+        $("participantTimerNote").textContent="Segnala il tuo rientro.";
       }
     };
-
     tick();
-
-    participantTimerInterval =
-      setInterval(tick, 250);
+    participantTimerInterval=setInterval(tick,250);
   }
 
-  $("teacherLoginBtn").onclick = async () => {
-    try {
-      if (!initFirebase()) return;
-
-      if (auth.currentUser) {
-        await signOut(auth);
-      }
-
-      await signInWithPopup(
-        auth,
-        googleProvider
-      );
-
-    } catch (err) {
-      console.error(
-        "Google login error:",
-        err
-      );
-
-      if (
-        err.code ===
-        "auth/popup-closed-by-user"
-      ) {
-        return;
-      }
-
-      alert(
-        `Accesso con Google non riuscito: ${err.message}`
-      );
+  $("teacherLoginBtn").onclick=async()=>{
+    try{
+      if(!initFirebase())return;
+      $("teacherAuthError").classList.add("hidden");
+      $("teacherAuthError").textContent="";
+      if(auth.currentUser)await signOut(auth);
+      await signInWithPopup(auth,googleProvider);
+    }catch(err){
+      console.error("Google login error:",err);
+      if(err.code==="auth/popup-closed-by-user")return;
+      $("teacherAuthError").textContent=`Accesso con Google non riuscito: ${err.message}`;
+      $("teacherAuthError").classList.remove("hidden");
     }
   };
 
-  if (initFirebase()) {
-    onAuthStateChanged(auth, user => {
-      if (!user || user.isAnonymous) {
+  async function authorizeTeacher(user){
+    if(!user||user.isAnonymous)return false;
+    try{
+      const snap=await get(ref(db,`teachers/${user.uid}`));
+      const teacher=snap.val();
+      return teacher?.enabled===true;
+    }catch(err){
+      console.error("Teacher authorization error:",err);
+      return false;
+    }
+  }
+
+  if(initFirebase()){
+    onAuthStateChanged(auth,async user=>{
+      if(!user||user.isAnonymous){
         $("teacherLoginCard").classList.remove("hidden");
         $("teacherWorkspace").classList.add("hidden");
         stopTeacherListeners();
         return;
       }
 
+      $("connBadge").textContent="verifica autorizzazione...";
+      const authorized=await authorizeTeacher(user);
+
+      if(!authorized){
+        stopTeacherListeners();
+        $("teacherWorkspace").classList.add("hidden");
+        $("teacherLoginCard").classList.remove("hidden");
+        $("teacherAuthError").textContent=`Account Google autenticato (${user.email||user.uid}), ma non autorizzato come docente.`;
+        $("teacherAuthError").classList.remove("hidden");
+        $("connBadge").textContent="docente non autorizzato";
+        return;
+      }
+
+      $("teacherAuthError").classList.add("hidden");
       $("teacherLoginCard").classList.add("hidden");
       $("teacherWorkspace").classList.remove("hidden");
-
-      $("teacherIdentity").textContent =
-        `Docente: ${
-          user.displayName ||
-          user.email ||
-          user.uid
-        }`;
-
-      $("connBadge").textContent =
-        "docente connesso";
-
+      $("teacherIdentity").textContent=`Docente: ${user.displayName||user.email||user.uid}`;
+      $("connBadge").textContent="docente connesso";
       startRoomsList();
     });
   }
 
-  $("teacherLogoutBtn").onclick = async () => {
-    if (auth) {
-      await signOut(auth);
-    }
-
-    activeTeacherRoom = null;
+  $("teacherLogoutBtn").onclick=async()=>{
+    if(auth)await signOut(auth);
+    activeTeacherRoom=null;
     clearSelectedRoom();
   };
 
-  function stopTeacherListeners() {
-    if (roomsStop) {
-      roomsStop();
-      roomsStop = null;
-    }
-
-    if (teacherPeopleStop) {
-      teacherPeopleStop();
-      teacherPeopleStop = null;
-    }
-
-    if (teacherMetaStop) {
-      teacherMetaStop();
-      teacherMetaStop = null;
-    }
-
-    teacherStatsInterval =
-      stopInterval(teacherStatsInterval);
-
-    roomsRenderInterval =
-      stopInterval(roomsRenderInterval);
+  function stopTeacherListeners(){
+    if(roomsStop){roomsStop();roomsStop=null}
+    if(teacherPeopleStop){teacherPeopleStop();teacherPeopleStop=null}
+    if(teacherMetaStop){teacherMetaStop();teacherMetaStop=null}
+    teacherStatsInterval=stopInterval(teacherStatsInterval);
+    roomsRenderInterval=stopInterval(roomsRenderInterval);
   }
 
-  function startRoomsList() {
-    if (roomsStop) roomsStop();
-
-    roomsStop = onValue(
-      ref(db, "rooms"),
-      snap => {
-        roomsCache =
-          snap.val() || {};
-
+  function startRoomsList(){
+    if(roomsStop)roomsStop();
+    roomsStop=onValue(
+      ref(db,"rooms"),
+      snap=>{
+        roomsCache=snap.val()||{};
         renderRoomsList(roomsCache);
       },
-      err => {
-        console.error("rooms listener:", err);
-
-        alert(
-          "Accesso docente non autorizzato o regole Firebase non compatibili."
-        );
-
-        signOut(auth);
+      err=>{
+        console.error("rooms listener:",err);
+        $("teacherAuthError").textContent="Autorizzazione docente valida, ma le Security Rules non consentono la lettura delle stanze.";
+        $("teacherAuthError").classList.remove("hidden");
       }
     );
-
-    roomsRenderInterval =
-      stopInterval(roomsRenderInterval);
-
-    roomsRenderInterval =
-      setInterval(
-        () => renderRoomsList(roomsCache),
-        1000
-      );
+    roomsRenderInterval=stopInterval(roomsRenderInterval);
+    roomsRenderInterval=setInterval(()=>renderRoomsList(roomsCache),1000);
   }
 
-  function renderRoomsList(rooms) {
-    const entries =
-      Object.entries(rooms).sort(
-        (a, b) =>
-          (b[1]?.meta?.createdAt || 0) -
-          (a[1]?.meta?.createdAt || 0)
-      );
-
-    $("roomsList").innerHTML = "";
-
-    if (!entries.length) {
-      $("roomsList").innerHTML =
-        '<div class="mutedbox">Nessuna stanza creata.</div>';
+  function renderRoomsList(rooms){
+    const entries=Object.entries(rooms).sort((a,b)=>(b[1]?.meta?.createdAt||0)-(a[1]?.meta?.createdAt||0));
+    $("roomsList").innerHTML="";
+    if(!entries.length){
+      $("roomsList").innerHTML='<div class="mutedbox">Nessuna stanza creata.</div>';
       return;
     }
-
-    for (const [code, data] of entries) {
-      const people =
-        Object.values(
-          data.participants || {}
-        );
-
-      const present =
-        people.filter(
-          p => p.status === "present"
-        ).length;
-
-      const meta = data.meta || {};
-
-      const el =
-        document.createElement("div");
-
-      el.className =
-        "roomitem" +
-        (activeTeacherRoom === code
-          ? " selected"
-          : "");
-
-      el.dataset.code = code;
-
-      el.innerHTML = `
-        <div>
-          <div class="name"></div>
-          <div class="small"></div>
-        </div>
-        <span class="pill ${roomStatusClass(meta)}">
-          ${roomStatus(meta)}
-        </span>
-      `;
-
-      el.querySelector(".name").textContent =
-        meta.title
-          ? `${code} · ${meta.title}`
-          : code;
-
-      el.querySelector(".small").textContent =
-        `${present}/${people.length} presenti`;
-
-      el.onclick =
-        () => watchRoom(code);
-
+    for(const [code,data] of entries){
+      const people=Object.values(data.participants||{});
+      const present=people.filter(p=>p.status==="present").length;
+      const meta=data.meta||{};
+      const el=document.createElement("div");
+      el.className="roomitem"+(activeTeacherRoom===code?" selected":"");
+      el.dataset.code=code;
+      el.innerHTML=`<div><div class="name"></div><div class="small"></div></div><span class="pill ${roomStatusClass(meta)}">${roomStatus(meta)}</span>`;
+      el.querySelector(".name").textContent=meta.title?`${code} · ${meta.title}`:code;
+      el.querySelector(".small").textContent=`${present}/${people.length} presenti`;
+      el.onclick=()=>watchRoom(code);
       $("roomsList").appendChild(el);
     }
   }
 
-  $("createRoomBtn").onclick = async () => {
-    try {
-      if (
-        !auth?.currentUser ||
-        auth.currentUser.isAnonymous
-      ) {
-        return;
+  $("createRoomBtn").onclick=async()=>{
+    try{
+      if(!auth?.currentUser||auth.currentUser.isAnonymous)return;
+      const room=normRoom($("newRoomCode").value);
+      const title=$("newRoomTitle").value.trim().slice(0,80);
+      if(!room){alert("Inserisci il codice stanza.");return}
+      const existing=(await get(ref(db,`rooms/${room}/meta`))).val();
+      if(existing&&!confirm(`La stanza ${room} esiste già. Vuoi selezionarla?`))return;
+      if(!existing){
+        await set(ref(db,`rooms/${room}/meta`),{
+          isOpen:true,
+          archived:false,
+          title,
+          createdAt:serverTimestamp(),
+          updatedAt:serverTimestamp(),
+          createdBy:auth.currentUser.uid,
+          totalPausedMs:0,
+          breakStartedAt:null,
+          breakEndsAt:null
+        });
       }
-
-      const room =
-        normRoom($("newRoomCode").value);
-
-      const title =
-        $("newRoomTitle")
-          .value
-          .trim()
-          .slice(0, 80);
-
-      if (!room) {
-        alert("Inserisci il codice stanza.");
-        return;
-      }
-
-      const existing = (
-        await get(
-          ref(db, `rooms/${room}/meta`)
-        )
-      ).val();
-
-      if (
-        existing &&
-        !confirm(
-          `La stanza ${room} esiste già. Vuoi selezionarla?`
-        )
-      ) {
-        return;
-      }
-
-      if (!existing) {
-        await set(
-          ref(db, `rooms/${room}/meta`),
-          {
-            isOpen: true,
-            archived: false,
-            title,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            createdBy: auth.currentUser.uid,
-            totalPausedMs: 0,
-            breakStartedAt: null,
-            breakEndsAt: null
-          }
-        );
-      }
-
       await watchRoom(room);
-
-      $("newRoomCode").value = "";
-      $("newRoomTitle").value = "";
-    } catch (err) {
+      $("newRoomCode").value="";
+      $("newRoomTitle").value="";
+    }catch(err){
       console.error(err);
-
-      alert(
-        `Impossibile creare la stanza: ${err.message}`
-      );
+      alert(`Impossibile creare la stanza: ${err.message}`);
     }
   };
 
-  function clearSelectedRoom() {
-    activeTeacherRoom = null;
-    activeTeacherMeta = null;
-    activeTeacherPeople = {};
-
+  function clearSelectedRoom(){
+    activeTeacherRoom=null;
+    activeTeacherMeta=null;
+    activeTeacherPeople={};
     $("noRoomSelected").classList.remove("hidden");
     $("roomControlContent").classList.add("hidden");
-
     $("participantsPlaceholder").classList.remove("hidden");
     $("participantsContent").classList.add("hidden");
-
-    if (teacherPeopleStop) teacherPeopleStop();
-    if (teacherMetaStop) teacherMetaStop();
-
-    teacherStatsInterval =
-      stopInterval(teacherStatsInterval);
+    if(teacherPeopleStop)teacherPeopleStop();
+    if(teacherMetaStop)teacherMetaStop();
+    teacherStatsInterval=stopInterval(teacherStatsInterval);
   }
 
-  async function watchRoom(room) {
-    activeTeacherRoom = room;
-
+  async function watchRoom(room){
+    activeTeacherRoom=room;
     renderRoomsList(roomsCache);
-
     $("noRoomSelected").classList.add("hidden");
     $("roomControlContent").classList.remove("hidden");
-
     $("participantsPlaceholder").classList.add("hidden");
     $("participantsContent").classList.remove("hidden");
+    $("selectedRoomCode").textContent=`Codice stanza: ${room}`;
+    $("shareLink").value=roomLink(room);
 
-    $("selectedRoomCode").textContent =
-      `Codice stanza: ${room}`;
+    if(teacherPeopleStop)teacherPeopleStop();
+    teacherPeopleStop=onValue(ref(db,`rooms/${room}/participants`),snap=>{
+      activeTeacherPeople=snap.val()||{};
+      renderPeople(activeTeacherPeople);
+      maybePersistFirstEntry();
+      renderTeacherStats();
+    });
 
-    $("shareLink").value =
-      roomLink(room);
+    if(teacherMetaStop)teacherMetaStop();
+    teacherMetaStop=onValue(ref(db,`rooms/${room}/meta`),snap=>{
+      activeTeacherMeta=snap.val()||{};
+      $("selectedRoomTitle").value=activeTeacherMeta.title||"";
+      renderTeacherTimer(activeTeacherMeta.breakEndsAt||null);
+      maybePersistFirstEntry();
+      renderTeacherStats();
+    });
 
-    if (teacherPeopleStop) {
-      teacherPeopleStop();
-    }
-
-    teacherPeopleStop = onValue(
-      ref(db, `rooms/${room}/participants`),
-      snap => {
-        activeTeacherPeople =
-          snap.val() || {};
-
-        renderPeople(activeTeacherPeople);
-
-        maybePersistFirstEntry();
-        renderTeacherStats();
-      }
-    );
-
-    if (teacherMetaStop) {
-      teacherMetaStop();
-    }
-
-    teacherMetaStop = onValue(
-      ref(db, `rooms/${room}/meta`),
-      snap => {
-        activeTeacherMeta =
-          snap.val() || {};
-
-        $("selectedRoomTitle").value =
-          activeTeacherMeta.title || "";
-
-        renderTeacherTimer(
-          activeTeacherMeta.breakEndsAt || null
-        );
-
-        maybePersistFirstEntry();
-        renderTeacherStats();
-      }
-    );
-
-    teacherStatsInterval =
-      stopInterval(teacherStatsInterval);
-
-    teacherStatsInterval =
-      setInterval(
-        renderTeacherStats,
-        1000
-      );
+    teacherStatsInterval=stopInterval(teacherStatsInterval);
+    teacherStatsInterval=setInterval(renderTeacherStats,1000);
   }
 
-  async function maybePersistFirstEntry() {
-    if (
-      !activeTeacherRoom ||
-      !activeTeacherMeta ||
-      activeTeacherMeta.firstEntryAt
-    ) {
-      return;
-    }
-
-    const times =
-      Object.values(
-        activeTeacherPeople || {}
-      )
-        .map(p => Number(p.joinedAt))
-        .filter(Number.isFinite);
-
-    if (!times.length) return;
-
-    const first =
-      Math.min(...times);
-
-    try {
-      await update(
-        ref(
-          db,
-          `rooms/${activeTeacherRoom}/meta`
-        ),
-        {
-          firstEntryAt: first
-        }
-      );
-    } catch (err) {
-      console.warn(
-        "firstEntryAt:",
-        err
-      );
-    }
+  async function maybePersistFirstEntry(){
+    if(!activeTeacherRoom||!activeTeacherMeta||activeTeacherMeta.firstEntryAt)return;
+    const times=Object.values(activeTeacherPeople||{}).map(p=>Number(p.joinedAt)).filter(Number.isFinite);
+    if(!times.length)return;
+    const first=Math.min(...times);
+    try{
+      await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{firstEntryAt:first});
+    }catch(err){console.warn("firstEntryAt:",err)}
   }
 
-  function renderPeople(obj) {
-    const vals =
-      Object.values(obj || {})
-        .sort(
-          (a, b) =>
-            (b.status === "present") -
-              (a.status === "present") ||
-            (a.nick || "").localeCompare(
-              b.nick || ""
-            )
-        );
-
-    const present =
-      vals.filter(
-        v => v.status === "present"
-      ).length;
-
-    $("presentCount").textContent = present;
-    $("totalCount").textContent = vals.length;
-
-    $("allBackNotice").classList.toggle(
-      "hidden",
-      !(
-        vals.length > 0 &&
-        present === vals.length
-      )
-    );
-
-    $("peopleList").innerHTML = "";
-
-    for (const p of vals) {
-      const el =
-        document.createElement("div");
-
-      el.className = "person";
-
-      el.innerHTML = `
-        <div>
-          <div class="name"></div>
-          <div class="small">
-            Ultimo aggiornamento: ${fmtDateTime(p.updatedAt)}
-          </div>
-        </div>
-        <span class="pill ${p.status === "present" ? "on" : "off"}">
-          ${p.status === "present" ? "Presente" : "Assente"}
-        </span>
-      `;
-
-      el.querySelector(".name").textContent =
-        p.nick || "Senza nome";
-
+  function renderPeople(obj){
+    const vals=Object.values(obj||{}).sort((a,b)=>(b.status==="present")-(a.status==="present")||(a.nick||"").localeCompare(b.nick||""));
+    const present=vals.filter(v=>v.status==="present").length;
+    $("presentCount").textContent=present;
+    $("totalCount").textContent=vals.length;
+    $("allBackNotice").classList.toggle("hidden",!(vals.length>0&&present===vals.length));
+    $("peopleList").innerHTML="";
+    for(const p of vals){
+      const el=document.createElement("div");
+      el.className="person";
+      el.innerHTML=`<div><div class="name"></div><div class="small">Ultimo aggiornamento: ${fmtDateTime(p.updatedAt)}</div></div><span class="pill ${p.status==="present"?"on":"off"}">${p.status==="present"?"Presente":"Assente"}</span>`;
+      el.querySelector(".name").textContent=p.nick||"Senza nome";
       $("peopleList").appendChild(el);
     }
   }
 
-  function effectivePauseMs(meta, now) {
-    let total =
-      Number(meta?.totalPausedMs) || 0;
-
-    if (meta?.breakStartedAt) {
-      const end =
-        Math.min(
-          now,
-          Number(meta.breakEndsAt) || now
-        );
-
-      if (end > meta.breakStartedAt) {
-        total +=
-          end - meta.breakStartedAt;
-      }
+  function effectivePauseMs(meta,now){
+    let total=Number(meta?.totalPausedMs)||0;
+    if(meta?.breakStartedAt){
+      const end=Math.min(now,Number(meta.breakEndsAt)||now);
+      if(end>meta.breakStartedAt)total+=end-meta.breakStartedAt;
     }
-
-    return Math.max(0, total);
+    return Math.max(0,total);
   }
 
-  function roomEndTime(meta, now) {
-    return meta?.archivedAt || now;
+  function roomEndTime(meta,now){return meta?.archivedAt||now}
+
+  function renderTeacherStats(){
+    if(!activeTeacherRoom||!activeTeacherMeta)return;
+    const now=serverNow(),meta=activeTeacherMeta,created=Number(meta.createdAt)||null;
+    const people=Object.values(activeTeacherPeople||{});
+    const firstEntry=people.map(p=>Number(p.joinedAt)||Infinity).reduce((a,b)=>Math.min(a,b),Infinity);
+    const end=roomEndTime(meta,now);
+    const total=created?Math.max(0,end-created):null;
+    const pause=created?Math.min(total,effectivePauseMs(meta,end)):null;
+    const active=total==null?null:Math.max(0,total-pause);
+    const storedFirst=Number(meta.firstEntryAt);
+
+    $("statCreatedAt").textContent=fmtDateTime(created);
+    $("statFirstEntry").textContent=Number.isFinite(storedFirst)&&storedFirst>0?fmtDateTime(storedFirst):(Number.isFinite(firstEntry)?fmtDateTime(firstEntry):"—");
+    $("statTotalTime").textContent=fmtDuration(total);
+    $("statPauseTime").textContent=fmtDuration(pause);
+    $("statActiveTime").textContent=fmtDuration(active);
+    $("statRoomStatus").textContent=roomStatus(meta);
+
+    const archived=meta.archived===true;
+    $("archiveRoomBtn").disabled=archived;
+    $("saveRoomTitleBtn").disabled=false;
+    $("startBreakBtn").disabled=archived;
+    $("endBreakBtn").disabled=archived||!meta.breakStartedAt;
   }
 
-  function renderTeacherStats() {
-    if (
-      !activeTeacherRoom ||
-      !activeTeacherMeta
-    ) {
-      return;
-    }
-
-    const now = serverNow();
-    const meta = activeTeacherMeta;
-
-    const created =
-      Number(meta.createdAt) || null;
-
-    const people =
-      Object.values(
-        activeTeacherPeople || {}
-      );
-
-    const firstEntry =
-      people
-        .map(
-          p =>
-            Number(p.joinedAt) ||
-            Infinity
-        )
-        .reduce(
-          (a, b) => Math.min(a, b),
-          Infinity
-        );
-
-    const end =
-      roomEndTime(meta, now);
-
-    const total =
-      created
-        ? Math.max(
-            0,
-            end - created
-          )
-        : null;
-
-    const pause =
-      created
-        ? Math.min(
-            total,
-            effectivePauseMs(
-              meta,
-              end
-            )
-          )
-        : null;
-
-    const active =
-      total == null
-        ? null
-        : Math.max(
-            0,
-            total - pause
-          );
-
-    const storedFirst =
-      Number(meta.firstEntryAt);
-
-    $("statCreatedAt").textContent =
-      fmtDateTime(created);
-
-    $("statFirstEntry").textContent =
-      Number.isFinite(storedFirst) &&
-      storedFirst > 0
-        ? fmtDateTime(storedFirst)
-        : Number.isFinite(firstEntry)
-          ? fmtDateTime(firstEntry)
-          : "—";
-
-    $("statTotalTime").textContent =
-      fmtDuration(total);
-
-    $("statPauseTime").textContent =
-      fmtDuration(pause);
-
-    $("statActiveTime").textContent =
-      fmtDuration(active);
-
-    $("statRoomStatus").textContent =
-      roomStatus(meta);
-
-    const archived =
-      meta.archived === true;
-
-    $("archiveRoomBtn").disabled =
-      archived;
-
-    $("saveRoomTitleBtn").disabled =
-      false;
-
-    $("startBreakBtn").disabled =
-      archived;
-
-    $("endBreakBtn").disabled =
-      archived ||
-      !meta.breakStartedAt;
-  }
-
-  async function settlePause(room, meta) {
-    if (!meta?.breakStartedAt) {
-      return (
-        Number(meta?.totalPausedMs) ||
-        0
-      );
-    }
-
-    const now = serverNow();
-
-    const effectiveEnd =
-      Math.min(
-        now,
-        Number(meta.breakEndsAt) ||
-        now
-      );
-
-    const elapsed =
-      Math.max(
-        0,
-        effectiveEnd -
-          Number(meta.breakStartedAt)
-      );
-
-    const total =
-      (Number(meta.totalPausedMs) || 0) +
-      elapsed;
-
-    await update(
-      ref(db, `rooms/${room}/meta`),
-      {
-        totalPausedMs: total,
-        breakStartedAt: null,
-        breakEndsAt: effectiveEnd,
-        updatedAt: serverTimestamp()
-      }
-    );
-
+  async function settlePause(room,meta){
+    if(!meta?.breakStartedAt)return Number(meta?.totalPausedMs)||0;
+    const now=serverNow();
+    const effectiveEnd=Math.min(now,Number(meta.breakEndsAt)||now);
+    const elapsed=Math.max(0,effectiveEnd-Number(meta.breakStartedAt));
+    const total=(Number(meta.totalPausedMs)||0)+elapsed;
+    await update(ref(db,`rooms/${room}/meta`),{
+      totalPausedMs:total,
+      breakStartedAt:null,
+      breakEndsAt:effectiveEnd,
+      updatedAt:serverTimestamp()
+    });
     return total;
   }
 
-  $("saveRoomTitleBtn").onclick =
-    async () => {
-      if (!activeTeacherRoom) return;
+  $("saveRoomTitleBtn").onclick=async()=>{
+    if(!activeTeacherRoom)return;
+    const title=$("selectedRoomTitle").value.trim().slice(0,80);
+    await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{title,updatedAt:serverTimestamp()});
+  };
 
-      const title =
-        $("selectedRoomTitle")
-          .value
-          .trim()
-          .slice(0, 80);
+  $("archiveRoomBtn").onclick=async()=>{
+    if(!activeTeacherRoom)return;
+    if(!confirm(`Archiviare la stanza ${activeTeacherRoom}? I partecipanti non potranno più usarla.`))return;
+    await settlePause(activeTeacherRoom,activeTeacherMeta);
+    await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{
+      archived:true,
+      isOpen:false,
+      archivedAt:serverTimestamp(),
+      breakStartedAt:null,
+      breakEndsAt:null,
+      updatedAt:serverTimestamp()
+    });
+  };
 
-      await update(
-        ref(
-          db,
-          `rooms/${activeTeacherRoom}/meta`
-        ),
-        {
-          title,
-          updatedAt: serverTimestamp()
-        }
-      );
-    };
+  $("startBreakBtn").onclick=async()=>{
+    const room=activeTeacherRoom;
+    if(!room||activeTeacherMeta?.archived)return;
 
-  $("archiveRoomBtn").onclick =
-    async () => {
-      if (!activeTeacherRoom) return;
+    await settlePause(room,activeTeacherMeta);
 
-      if (
-        !confirm(
-          `Archiviare la stanza ${activeTeacherRoom}? I partecipanti non potranno più usarla.`
-        )
-      ) {
-        return;
-      }
+    const mins=Math.max(1,Math.min(90,Number($("breakMinutes").value)||15));
+    const start=serverNow(),end=start+mins*60000;
+    const people=activeTeacherPeople||{},updates={};
 
-      await settlePause(
-        activeTeacherRoom,
-        activeTeacherMeta
-      );
-
-      await update(
-        ref(
-          db,
-          `rooms/${activeTeacherRoom}/meta`
-        ),
-        {
-          archived: true,
-          isOpen: false,
-          archivedAt: serverTimestamp(),
-          breakStartedAt: null,
-          breakEndsAt: null,
-          updatedAt: serverTimestamp()
-        }
-      );
-    };
-
-  $("startBreakBtn").onclick =
-    async () => {
-      const room =
-        activeTeacherRoom;
-
-      if (
-        !room ||
-        activeTeacherMeta?.archived
-      ) {
-        return;
-      }
-
-      await settlePause(
-        room,
-        activeTeacherMeta
-      );
-
-      const mins =
-        Math.max(
-          1,
-          Math.min(
-            90,
-            Number(
-              $("breakMinutes").value
-            ) || 15
-          )
-        );
-
-      const start =
-        serverNow();
-
-      const end =
-        start + mins * 60000;
-
-      const people =
-        activeTeacherPeople || {};
-
-      const updates = {};
-
-      for (
-        const uid of Object.keys(people)
-      ) {
-        updates[
-          `rooms/${room}/participants/${uid}/status`
-        ] = "away";
-
-        updates[
-          `rooms/${room}/participants/${uid}/updatedAt`
-        ] = start;
-      }
-
-      updates[
-        `rooms/${room}/meta/breakStartedAt`
-      ] = start;
-
-      updates[
-        `rooms/${room}/meta/breakEndsAt`
-      ] = end;
-
-      updates[
-        `rooms/${room}/meta/isOpen`
-      ] = true;
-
-      updates[
-        `rooms/${room}/meta/updatedAt`
-      ] = start;
-
-      await update(
-        ref(db),
-        updates
-      );
-    };
-
-  $("endBreakBtn").onclick =
-    async () => {
-      if (!activeTeacherRoom) return;
-
-      await settlePause(
-        activeTeacherRoom,
-        activeTeacherMeta
-      );
-    };
-
-  function renderTeacherTimer(end) {
-    teacherTimerInterval =
-      stopInterval(
-        teacherTimerInterval
-      );
-
-    if (!end) {
-      $("teacherTimerBox")
-        .classList.add("hidden");
-
-      return;
+    for(const uid of Object.keys(people)){
+      updates[`rooms/${room}/participants/${uid}/status`]="away";
+      updates[`rooms/${room}/participants/${uid}/updatedAt`]=start;
     }
 
-    $("teacherTimerBox")
-      .classList.remove("hidden");
+    updates[`rooms/${room}/meta/breakStartedAt`]=start;
+    updates[`rooms/${room}/meta/breakEndsAt`]=end;
+    updates[`rooms/${room}/meta/isOpen`]=true;
+    updates[`rooms/${room}/meta/updatedAt`]=start;
 
-    const tick = () => {
-      const rem =
-        end - serverNow();
+    await update(ref(db),updates);
+  };
 
-      $("teacherTimer").textContent =
-        fmtCountdown(rem);
+  $("endBreakBtn").onclick=async()=>{
+    if(!activeTeacherRoom)return;
+    await settlePause(activeTeacherRoom,activeTeacherMeta);
+  };
 
-      $("teacherTimerNote").textContent =
-        rem > 0
-          ? "Rientro in corso."
-          : "Pausa terminata.";
+  function renderTeacherTimer(end){
+    teacherTimerInterval=stopInterval(teacherTimerInterval);
+    if(!end){
+      $("teacherTimerBox").classList.add("hidden");
+      return;
+    }
+    $("teacherTimerBox").classList.remove("hidden");
+    const tick=()=>{
+      const rem=end-serverNow();
+      $("teacherTimer").textContent=fmtCountdown(rem);
+      $("teacherTimerNote").textContent=rem>0?"Rientro in corso.":"Pausa terminata.";
     };
-
     tick();
-
-    teacherTimerInterval =
-      setInterval(tick, 250);
+    teacherTimerInterval=setInterval(tick,250);
   }
 
-  $("resetBtn").onclick =
-    async () => {
-      if (!activeTeacherRoom) return;
+  $("resetBtn").onclick=async()=>{
+    if(!activeTeacherRoom)return;
+    if(confirm(`Cancellare tutti i partecipanti registrati nella stanza ${activeTeacherRoom}?`)){
+      await remove(ref(db,`rooms/${activeTeacherRoom}/participants`));
+    }
+  };
 
-      if (
-        confirm(
-          `Cancellare tutti i partecipanti registrati nella stanza ${activeTeacherRoom}?`
-        )
-      ) {
-        await remove(
-          ref(
-            db,
-            `rooms/${activeTeacherRoom}/participants`
-          )
-        );
-      }
-    };
+  $("copyLinkBtn").onclick=async()=>{
+    const text=$("shareLink").value;
+    if(!text)return;
+    await navigator.clipboard.writeText(text);
+    const old=$("copyLinkBtn").textContent;
+    $("copyLinkBtn").textContent="Copiato";
+    setTimeout(()=>$("copyLinkBtn").textContent=old,1200);
+  };
 
-  $("copyLinkBtn").onclick =
-    async () => {
-      const text =
-        $("shareLink").value;
-
-      if (!text) return;
-
-      await navigator.clipboard.writeText(text);
-
-      const old =
-        $("copyLinkBtn").textContent;
-
-      $("copyLinkBtn").textContent =
-        "Copiato";
-
-      setTimeout(
-        () =>
-          $("copyLinkBtn").textContent =
-            old,
-        1200
-      );
-    };
-
-  if (!configured) {
-    $("connBadge").textContent =
-      "configurazione Firebase richiesta";
-  }
+  if(!configured)$("connBadge").textContent="configurazione Firebase richiesta";
 </script>
 </body>
 </html>
