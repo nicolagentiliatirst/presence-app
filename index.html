@@ -8,17 +8,19 @@
     :root{
       --bg:#0f172a;--card:#111827;--muted:#94a3b8;--text:#f8fafc;
       --accent:#14b8a6;--ok:#22c55e;--off:#64748b;--danger:#ef4444;
-      --line:#1f2937;--warn:#f59e0b
+      --line:#1f2937;--warn:#f59e0b;--blue:#38bdf8
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(135deg,#0f172a,#111827 60%,#0b1324);color:var(--text);min-height:100vh}
-    .wrap{max-width:1060px;margin:0 auto;padding:28px 18px 50px}
+    .wrap{max-width:1440px;margin:0 auto;padding:28px 18px 50px}
     .top{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px}
     .brand{font-weight:800;font-size:clamp(26px,4vw,42px)}
     .badge{padding:8px 12px;border:1px solid #334155;border-radius:999px;color:#cbd5e1;font-size:13px}
     .tabs{display:flex;gap:10px;margin-bottom:18px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    @media(max-width:780px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+    .teacher-grid{display:grid;grid-template-columns:minmax(280px,.9fr) minmax(320px,1fr) minmax(340px,1.15fr);gap:18px;align-items:start}
+    @media(max-width:1100px){.teacher-grid{grid-template-columns:1fr 1fr}.teacher-grid .participants-col{grid-column:1/-1}}
+    @media(max-width:780px){.grid,.teacher-grid{grid-template-columns:1fr}.teacher-grid .participants-col{grid-column:auto}.top{align-items:flex-start;flex-direction:column}}
     .card{background:rgba(17,24,39,.92);border:1px solid #233044;border-radius:20px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
     h2{margin:0 0 14px;font-size:20px} h3{margin:20px 0 8px;font-size:15px;color:#cbd5e1}
     label{display:block;color:#cbd5e1;font-size:13px;margin:12px 0 6px}
@@ -33,16 +35,17 @@
     .dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;background:var(--off)}
     .dot.on{background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.12)}
     .big{font-size:42px;font-weight:800;line-height:1}.sub{color:var(--muted);font-size:13px;margin-top:6px}
-    .list{margin-top:12px;display:grid;gap:8px;max-height:420px;overflow:auto}
-    .person{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;background:#0b1220;border:1px solid #1f2937}
+    .list{margin-top:12px;display:grid;gap:8px;max-height:520px;overflow:auto}
+    .person,.roomitem{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;border-radius:12px;background:#0b1220;border:1px solid #1f2937}
+    .roomitem{cursor:pointer;transition:.15s border-color,.15s transform}.roomitem:hover{border-color:#3b556f;transform:translateY(-1px)}.roomitem.selected{border-color:var(--accent)}
     .name{font-weight:700}.small{font-size:12px;color:var(--muted)}
-    .pill{padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}.pill.on{background:rgba(34,197,94,.15);color:#86efac}.pill.off{background:#1e293b;color:#cbd5e1}
+    .pill{padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}.pill.on{background:rgba(34,197,94,.15);color:#86efac}.pill.off{background:#1e293b;color:#cbd5e1}.pill.pause{background:rgba(245,158,11,.15);color:#fcd34d}.pill.archived{background:rgba(100,116,139,.2);color:#cbd5e1}
     .hidden{display:none!important}.footer{margin-top:18px;color:#64748b;font-size:12px;text-align:center}.notice{margin-top:10px;color:#fbbf24;font-size:13px}
-    .timer{font-size:clamp(48px,10vw,88px);font-weight:900;letter-spacing:-.04em;line-height:1;margin:12px 0}
+    .timer{font-size:clamp(48px,10vw,88px);font-weight:900;letter-spacing:-.04em;line-height:1;margin:12px 0}.timer.ended{font-size:clamp(28px,5vw,44px);letter-spacing:-.02em}
     .timerline{padding:18px;border-radius:18px;background:#08131f;border:1px solid #1f2937;text-align:center;margin-top:14px}
-    .roomtitle{font-size:14px;color:#cbd5e1;margin-top:4px}
-    .sep{height:1px;background:#243247;margin:18px 0}
-    .copybox{display:flex;gap:8px}.copybox input{flex:1}
+    .roomtitle{font-size:14px;color:#cbd5e1;margin-top:4px}.sep{height:1px;background:#243247;margin:18px 0}.copybox{display:flex;gap:8px}.copybox input{flex:1}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stat{background:#0b1220;border:1px solid #1f2937;border-radius:14px;padding:12px}.stat-label{color:var(--muted);font-size:12px}.stat-value{font-size:18px;font-weight:800;margin-top:4px}
+    .inline-edit{display:flex;gap:8px;align-items:center;margin-top:12px}.inline-edit input{flex:1}.mutedbox{padding:12px;border:1px dashed #334155;border-radius:14px;color:var(--muted);font-size:13px}
   </style>
 </head>
 <body>
@@ -72,15 +75,19 @@
       <section class="card hidden" id="participantCard">
         <h2 id="hello">Ciao</h2>
         <div class="roomtitle" id="participantRoomTitle"></div>
-        <div class="statusbox">
-          <div><span class="dot" id="myDot"></span><b id="myStatus">Assente</b><div class="sub" id="myRoom"></div></div>
-        </div>
+        <div class="statusbox"><div><span class="dot" id="myDot"></span><b id="myStatus">Assente</b><div class="sub" id="myRoom"></div></div></div>
         <div class="btnrow">
           <button class="btn ok" id="presentBtn">Sono presente</button>
           <button class="btn off hidden" id="awayBtn">Mi assento</button>
+          <button class="btn ghost" id="renameBtn">Cambia nome</button>
+        </div>
+        <div class="inline-edit hidden" id="renameBox">
+          <input id="renameInput" maxlength="32" autocomplete="off" placeholder="Nuovo nickname" />
+          <button class="btn primary" id="saveRenameBtn">Salva</button>
+          <button class="btn ghost" id="cancelRenameBtn">Annulla</button>
         </div>
         <div class="timerline hidden" id="participantTimerBox">
-          <div class="sub">La pausa termina tra</div>
+          <div class="sub" id="participantTimerLabel">La pausa termina tra</div>
           <div class="timer" id="participantTimer">00:00</div>
           <div class="sub" id="participantTimerNote">Quando rientri, premi “Sono presente”.</div>
         </div>
@@ -89,448 +96,203 @@
   </div>
 
   <div id="teacherMode" class="hidden">
-    <div class="grid">
-      <section class="card" id="teacherLoginCard">
-        <h2>Accesso docente</h2>
-        <label>Email Firebase</label>
-        <input id="teacherEmail" type="email" autocomplete="username" placeholder="docente@example.org" />
-        <label>Password</label>
-        <input id="teacherPassword" type="password" autocomplete="current-password" />
-        <div class="btnrow"><button class="btn primary" id="teacherLoginBtn">Accedi</button></div>
-        <div class="notice">L’account docente va creato in Firebase Authentication → Users.</div>
-      </section>
+    <section class="card" id="teacherLoginCard" style="max-width:520px">
+      <h2>Accesso docente</h2>
 
-      <section class="card hidden" id="teacherControlCard">
-        <h2>Controllo stanza</h2>
+      <div class="btnrow">
+        <button class="btn primary" id="teacherLoginBtn">
+          Accedi con Google
+        </button>
+      </div>
+
+      <div class="notice">
+        Accesso riservato ai docenti autorizzati.
+      </div>
+    </section>
+
+    <div class="teacher-grid hidden" id="teacherWorkspace">
+      <section class="card">
+        <h2>Stanze</h2>
         <div class="sub" id="teacherIdentity"></div>
-        <label>Codice stanza</label>
-        <input id="adminRoom" placeholder="es. AI2409" autocomplete="off" />
-        <label>Titolo opzionale</label>
-        <input id="roomTitle" placeholder="es. Introduzione all’AI" autocomplete="off" />
-        <div class="btnrow">
-          <button class="btn primary" id="openRoomBtn">Apri / crea stanza</button>
-          <button class="btn ghost" id="watchBtn">Osserva</button>
-          <button class="btn danger" id="closeRoomBtn">Chiudi stanza</button>
-        </div>
-
+        <div class="list" id="roomsList"></div>
         <div class="sep"></div>
-        <h3>Link partecipanti</h3>
-        <div class="copybox">
-          <input id="shareLink" readonly />
-          <button class="btn ghost" id="copyLinkBtn">Copia</button>
-        </div>
-
+        <h3>Crea nuova stanza</h3>
+        <label>Codice stanza</label><input id="newRoomCode" placeholder="es. AI2409" autocomplete="off" />
+        <label>Titolo opzionale</label><input id="newRoomTitle" placeholder="es. Introduzione all’AI" autocomplete="off" />
+        <div class="btnrow"><button class="btn primary" id="createRoomBtn">Crea stanza</button></div>
         <div class="sep"></div>
-        <h3>Pausa</h3>
-        <label>Durata (minuti)</label>
-        <input id="breakMinutes" type="number" min="1" max="90" value="15" />
-        <div class="btnrow">
-          <button class="btn warn" id="startBreakBtn">Avvia pausa</button>
-          <button class="btn ghost" id="endBreakBtn">Termina pausa</button>
-        </div>
-        <div class="timerline hidden" id="teacherTimerBox">
-          <div class="sub">Tempo rimanente</div>
-          <div class="timer" id="teacherTimer">00:00</div>
-          <div class="sub" id="teacherTimerNote"></div>
-        </div>
+        <button class="btn ghost" id="teacherLogoutBtn">Esci</button>
+      </section>
 
-        <div class="sep"></div>
-        <div class="btnrow">
-          <button class="btn danger" id="resetBtn">Reset partecipanti</button>
-          <button class="btn ghost" id="teacherLogoutBtn">Esci</button>
+      <section class="card" id="roomControlCard">
+        <h2>Stanza selezionata</h2>
+        <div class="mutedbox" id="noRoomSelected">Seleziona una stanza dalla colonna di sinistra.</div>
+        <div id="roomControlContent" class="hidden">
+          <div class="sub" id="selectedRoomCode"></div>
+          <label>Titolo</label><input id="selectedRoomTitle" maxlength="80" />
+          <div class="btnrow">
+            <button class="btn primary" id="saveRoomTitleBtn">Salva titolo</button>
+            <button class="btn danger" id="archiveRoomBtn">Archivia stanza</button>
+          </div>
+          <div class="sep"></div>
+          <h3>Link partecipanti</h3>
+          <div class="copybox"><input id="shareLink" readonly /><button class="btn ghost" id="copyLinkBtn">Copia</button></div>
+          <div class="sep"></div>
+          <h3>Statistiche temporali</h3>
+          <div class="stats">
+            <div class="stat"><div class="stat-label">Creazione / apertura</div><div class="stat-value" id="statCreatedAt">—</div></div>
+            <div class="stat"><div class="stat-label">Primo ingresso</div><div class="stat-value" id="statFirstEntry">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo complessivo</div><div class="stat-value" id="statTotalTime">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo attivo</div><div class="stat-value" id="statActiveTime">—</div></div>
+            <div class="stat"><div class="stat-label">Tempo in pausa</div><div class="stat-value" id="statPauseTime">—</div></div>
+            <div class="stat"><div class="stat-label">Stato</div><div class="stat-value" id="statRoomStatus">—</div></div>
+          </div>
+          <div class="sep"></div>
+          <h3>Pausa</h3>
+          <label>Durata (minuti)</label><input id="breakMinutes" type="number" min="1" max="90" value="15" />
+          <div class="btnrow"><button class="btn warn" id="startBreakBtn">Avvia pausa</button><button class="btn ghost" id="endBreakBtn">Termina pausa</button></div>
+          <div class="timerline hidden" id="teacherTimerBox">
+            <div class="sub">Tempo rimanente</div><div class="timer" id="teacherTimer">00:00</div><div class="sub" id="teacherTimerNote"></div>
+          </div>
         </div>
       </section>
 
-      <section class="card hidden" id="dashboardCard">
-        <h2>Dashboard docente</h2>
-        <div class="big"><span id="presentCount">0</span>/<span id="totalCount">0</span></div>
-        <div class="sub">presenti / registrati</div>
-        <div class="notice hidden" id="allBackNotice">Tutti i partecipanti registrati sono rientrati.</div>
-        <div class="list" id="peopleList"></div>
+      <section class="card participants-col" id="dashboardCard">
+        <h2>Partecipanti</h2>
+        <div class="mutedbox" id="participantsPlaceholder">Seleziona una stanza per visualizzare i partecipanti.</div>
+        <div id="participantsContent" class="hidden">
+          <div class="big"><span id="presentCount">0</span>/<span id="totalCount">0</span></div>
+          <div class="sub">presenti / registrati</div>
+          <div class="notice hidden" id="allBackNotice">Tutti i partecipanti registrati sono rientrati.</div>
+          <div class="list" id="peopleList"></div>
+          <div class="sep"></div>
+          <button class="btn danger" id="resetBtn">Reset partecipanti</button>
+        </div>
       </section>
     </div>
   </div>
 
-  <div class="footer">GitHub Pages + Firebase Authentication + Realtime Database · v2.2</div>
+  <div class="footer">GitHub Pages + Firebase Authentication + Realtime Database · v2.3</div>
 </div>
 
 <script type="module">
-  // Firebase Web config: pubblico per design. La sicurezza è nelle Security Rules.
-  const firebaseConfig = {
-    apiKey: "AIzaSyAXwSeqdBNpCeUr_RbNddtPQhVrT_zwXRI",
-    authDomain: "stanzavirtuale-2026.firebaseapp.com",
-    databaseURL: "https://stanzavirtuale-2026-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "stanzavirtuale-2026",
-    storageBucket: "stanzavirtuale-2026.firebasestorage.app",
-    messagingSenderId: "294515975716",
-    appId: "1:294515975716:web:2c25b7500c315cb6ffdab1",
-    measurementId: "G-CBTQG0ZVKL"
-  };
+  import { firebaseConfig } from "./firebase-config.js";
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-  import {
-    getDatabase, ref, set, update, get, onValue, remove,
-    serverTimestamp, onDisconnect
-  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
-  import {
-    getAuth, signInAnonymously, signInWithEmailAndPassword,
-    signOut, onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getDatabase, ref, set, update, get, onValue, remove, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+  import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
   const $ = id => document.getElementById(id);
   const configured = !firebaseConfig.apiKey.startsWith('INCOLLA_');
-
-  let app = null, db = null, auth = null;
-  let meRef = null, participantStop = null, participantMetaStop = null, participantConnectionStop = null;
-  let teacherPeopleStop = null, teacherMetaStop = null;
-  let participantTimerInterval = null, teacherTimerInterval = null;
-  let activeParticipantRoom = null, activeTeacherRoom = null;
-  let serverTimeOffsetMs = 0;
-  let serverOffsetStop = null;
+  let app=null, db=null, auth=null;
+  let meRef=null, activeParticipantRoom=null, activeParticipantNick='';
+  let participantStop=null, participantMetaStop=null, participantConnectionStop=null;
+  let roomsStop=null, teacherPeopleStop=null, teacherMetaStop=null;
+  let activeTeacherRoom=null, activeTeacherMeta=null, activeTeacherPeople={}, roomsCache={};
+  let participantTimerInterval=null, teacherTimerInterval=null, teacherStatsInterval=null, roomsRenderInterval=null;
+  let serverTimeOffsetMs=0;
 
   function initFirebase(){
-    if(!configured){
-      $('connBadge').textContent = 'configurazione Firebase richiesta';
-      return false;
-    }
+    if(!configured){ $('connBadge').textContent='configurazione Firebase richiesta'; return false; }
     if(!app){
-      app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      auth = getAuth(app);
-      $('connBadge').textContent = 'Firebase pronto';
-
-      // Sincronizza l'orologio locale con l'orario del server Firebase.
-      // E' un solo piccolo listener realtime, non una chiamata continua.
-      serverOffsetStop = onValue(ref(db, '.info/serverTimeOffset'), snap => {
-        serverTimeOffsetMs = Number(snap.val()) || 0;
-      });
+      app=initializeApp(firebaseConfig); db=getDatabase(app); auth=getAuth(app); $('connBadge').textContent='Firebase pronto';
+      onValue(ref(db,'.info/serverTimeOffset'),snap=>{ serverTimeOffsetMs=Number(snap.val())||0; });
     }
     return true;
   }
-
   function normRoom(s){return (s||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,24)}
   function normNick(s){return (s||'').trim().replace(/[.#$\[\]/]/g,'').slice(0,32)}
   function roomLink(room){return `${location.origin}${location.pathname}?room=${encodeURIComponent(room)}`}
-  function fmtTime(ms){
-    const total = Math.max(0, Math.ceil(ms/1000));
-    const m = Math.floor(total/60).toString().padStart(2,'0');
-    const s = (total%60).toString().padStart(2,'0');
-    return `${m}:${s}`;
-  }
-  function stopInterval(id){ if(id) clearInterval(id); return null; }
-  function serverNow(){ return Date.now() + serverTimeOffsetMs; }
-  function fmtUpdatedAt(ts){
-    if(!ts || typeof ts !== 'number') return 'aggiornamento in corso…';
-    return new Intl.DateTimeFormat('it-IT', {
-      day:'2-digit', month:'2-digit', year:'numeric',
-      hour:'2-digit', minute:'2-digit', second:'2-digit'
-    }).format(new Date(ts));
-  }
+  function serverNow(){return Date.now()+serverTimeOffsetMs}
+  function stopInterval(id){if(id) clearInterval(id); return null}
+  function fmtCountdown(ms){const t=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`}
+  function fmtDateTime(ts){if(!ts||typeof ts!=='number') return '—';return new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(ts))}
+  function fmtDuration(ms){if(ms==null||!Number.isFinite(ms)||ms<0) return '—';const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${h}h ${m}m ${sec}s`:`${m}m ${sec}s`}
+  function roomStatus(meta){if(!meta) return '—';if(meta.archived===true) return 'Archiviata';if(meta.breakEndsAt && meta.breakEndsAt>serverNow()) return 'In pausa';return 'Attiva'}
+  function roomStatusClass(meta){if(meta?.archived) return 'archived';if(meta?.breakEndsAt&&meta.breakEndsAt>serverNow()) return 'pause';return 'on'}
 
   async function ensureAnonymous(){
     if(!initFirebase()) return null;
-    if(auth.currentUser && auth.currentUser.isAnonymous) return auth.currentUser;
+    if(auth.currentUser?.isAnonymous) return auth.currentUser;
     if(auth.currentUser && !auth.currentUser.isAnonymous) await signOut(auth);
-    const cred = await signInAnonymously(auth);
-    $('connBadge').textContent = 'connesso';
-    return cred.user;
+    const cred=await signInAnonymously(auth); $('connBadge').textContent='connesso'; return cred.user;
   }
+  function switchMode(mode){const p=mode==='participant';$('participantMode').classList.toggle('hidden',!p);$('teacherMode').classList.toggle('hidden',p);$('participantModeBtn').className=`btn ${p?'primary':'ghost'}`;$('teacherModeBtn').className=`btn ${p?'ghost':'primary'}`}
+  $('participantModeBtn').onclick=()=>switchMode('participant'); $('teacherModeBtn').onclick=()=>switchMode('teacher');
 
-  function switchMode(mode){
-    const participant = mode === 'participant';
-    $('participantMode').classList.toggle('hidden', !participant);
-    $('teacherMode').classList.toggle('hidden', participant);
-    $('participantModeBtn').className = `btn ${participant?'primary':'ghost'}`;
-    $('teacherModeBtn').className = `btn ${participant?'ghost':'primary'}`;
-  }
-  $('participantModeBtn').onclick = () => switchMode('participant');
-  $('teacherModeBtn').onclick = () => switchMode('teacher');
+  const q=new URLSearchParams(location.search), linkedRoom=normRoom(q.get('room'));
+  if(linkedRoom){$('room').value=linkedRoom;document.querySelector('.tabs').classList.add('hidden');switchMode('participant')}
+  const savedRoom=localStorage.getItem('presence_room'),savedNick=localStorage.getItem('presence_nick');
+  if(savedRoom&&!$('room').value)$('room').value=savedRoom;if(savedNick)$('nick').value=savedNick;
 
-  const q = new URLSearchParams(location.search);
-  const linkedRoom = normRoom(q.get('room'));
-  if(linkedRoom){
-    $('room').value = linkedRoom;
-    // Link partecipante: niente selettore Docente/Partecipante.
-    document.querySelector('.tabs').classList.add('hidden');
-    switchMode('participant');
-  }
-  const savedRoom = localStorage.getItem('presence_room');
-  const savedNick = localStorage.getItem('presence_nick');
-  if(savedRoom && !$('room').value) $('room').value = savedRoom;
-  if(savedNick) $('nick').value = savedNick;
-
-  $('joinBtn').onclick = async () => {
-    try{
-      const room = normRoom($('room').value);
-      const nick = normNick($('nick').value);
-      if(!room || !nick){ alert('Inserisci stanza e nickname.'); return; }
-
-      const user = await ensureAnonymous();
-      if(!user) return;
-
-      const metaSnap = await get(ref(db, `rooms/${room}/meta`));
-      const meta = metaSnap.val();
-      if(!meta || meta.isOpen !== true){
-        alert('La stanza non esiste oppure è chiusa.');
-        return;
-      }
-
-      localStorage.setItem('presence_room', room);
-      localStorage.setItem('presence_nick', nick);
-      activeParticipantRoom = room;
-
-      meRef = ref(db, `rooms/${room}/participants/${user.uid}`);
-      await set(meRef, {nick, status:'present', updatedAt:serverTimestamp()});
-      $('joinCard').classList.add('hidden');
-      $('participantCard').classList.remove('hidden');
-      $('hello').textContent = `Ciao, ${nick}`;
-      $('myRoom').textContent = `Stanza ${room}`;
-      $('participantRoomTitle').textContent = meta.title || '';
-
-      if(participantStop) participantStop();
-      participantStop = onValue(meRef, snap => {
-        const value = snap.val();
-        const present = value?.status === 'present';
-        $('myDot').className = 'dot' + (present ? ' on' : '');
-        $('myStatus').textContent = present ? 'Presente' : 'Assente';
-
-        // Mostra sempre una sola azione possibile.
-        $('presentBtn').classList.toggle('hidden', present);
-        $('awayBtn').classList.toggle('hidden', !present);
-      });
-
-      // Ri-arma onDisconnect a ogni connessione/riconnessione.
-      // Se la connessione cade, il server marca il partecipante come assente.
-      if(participantConnectionStop) participantConnectionStop();
-      participantConnectionStop = onValue(ref(db, '.info/connected'), async snap => {
-        const connected = snap.val() === true;
-        $('connBadge').textContent = connected ? 'connesso' : 'riconnessione...';
-        if(connected && meRef){
-          try{
-            await onDisconnect(meRef).set({nick, status:'away', updatedAt:serverTimestamp()});
-          }catch(err){
-            console.warn('Impossibile registrare onDisconnect:', err);
-          }
-        }
-      });
-
-      if(participantMetaStop) participantMetaStop();
-      participantMetaStop = onValue(ref(db, `rooms/${room}/meta`), snap => {
-        const m = snap.val();
-        if(!m || m.isOpen !== true){
-          $('participantTimerNote').textContent = 'La stanza è stata chiusa dal docente.';
-          $('presentBtn').disabled = true;
-          $('awayBtn').disabled = true;
-        } else {
-          $('presentBtn').disabled = false;
-          $('awayBtn').disabled = false;
-          $('participantRoomTitle').textContent = m.title || '';
-        }
-        renderParticipantTimer(m?.breakEndsAt || null);
-      });
-
-    }catch(err){
-      console.error(err);
-      alert(`Errore: ${err.message}`);
-    }
-  };
-
-  async function setStatus(status){
+  async function armDisconnect(){
     if(!meRef) return;
-    const nick = normNick($('nick').value);
-    await set(meRef, {nick, status, updatedAt:serverTimestamp()});
-  }
-  $('presentBtn').onclick = () => setStatus('present');
-  $('awayBtn').onclick = () => setStatus('away');
-
-  function renderParticipantTimer(breakEndsAt){
-    participantTimerInterval = stopInterval(participantTimerInterval);
-    if(!breakEndsAt){
-      $('participantTimerBox').classList.add('hidden');
-      return;
-    }
-    $('participantTimerBox').classList.remove('hidden');
-    const tick = () => {
-      const remaining = breakEndsAt - serverNow();
-      $('participantTimer').textContent = fmtTime(remaining);
-      $('participantTimerNote').textContent = remaining > 0
-        ? 'Quando rientri, premi “Sono presente”.'
-        : 'La pausa è terminata: segnala il tuo rientro.';
-    };
-    tick();
-    // Aggiornamento solo locale: nessuna chiamata Firebase aggiuntiva.
-    // 250 ms riduce le differenze visive tra dispositivi mantenendo il display ai secondi.
-    participantTimerInterval = setInterval(tick, 250);
+    try{await onDisconnect(meRef).set({nick:activeParticipantNick,status:'away',updatedAt:serverTimestamp(),joinedAt:(await get(meRef)).val()?.joinedAt||serverNow()});}catch(err){console.warn('onDisconnect:',err)}
   }
 
-  $('teacherLoginBtn').onclick = async () => {
+  $('joinBtn').onclick=async()=>{
     try{
-      if(!initFirebase()) return;
-      if(auth.currentUser) await signOut(auth);
-      const email = $('teacherEmail').value.trim();
-      const password = $('teacherPassword').value;
-      if(!email || !password){ alert('Inserisci email e password docente.'); return; }
-      await signInWithEmailAndPassword(auth, email, password);
-      $('teacherPassword').value = '';
-    }catch(err){
-      console.error(err);
-      alert('Accesso docente non riuscito. Controlla credenziali e configurazione Firebase.');
-    }
+      const room=normRoom($('room').value),nick=normNick($('nick').value);if(!room||!nick){alert('Inserisci stanza e nickname.');return}
+      const user=await ensureAnonymous();if(!user)return;
+      const meta=(await get(ref(db,`rooms/${room}/meta`))).val();
+      if(!meta||meta.archived===true||meta.isOpen!==true){alert('La stanza non esiste oppure non è disponibile.');return}
+      const existing=(await get(ref(db,`rooms/${room}/participants/${user.uid}`))).val();
+      const joinedAt=existing?.joinedAt||serverNow();
+      activeParticipantRoom=room;activeParticipantNick=nick;localStorage.setItem('presence_room',room);localStorage.setItem('presence_nick',nick);
+      meRef=ref(db,`rooms/${room}/participants/${user.uid}`);
+      await set(meRef,{nick,status:'present',updatedAt:serverTimestamp(),joinedAt});
+      $('joinCard').classList.add('hidden');$('participantCard').classList.remove('hidden');$('hello').textContent=`Ciao, ${nick}`;$('myRoom').textContent=`Stanza ${room}`;$('participantRoomTitle').textContent=meta.title||'';
+      if(participantStop)participantStop();participantStop=onValue(meRef,snap=>{const v=snap.val(),present=v?.status==='present';if(v?.nick){activeParticipantNick=v.nick;$('hello').textContent=`Ciao, ${v.nick}`}$('myDot').className='dot'+(present?' on':'');$('myStatus').textContent=present?'Presente':'Assente';$('presentBtn').classList.toggle('hidden',present);$('awayBtn').classList.toggle('hidden',!present)});
+      if(participantConnectionStop)participantConnectionStop();participantConnectionStop=onValue(ref(db,'.info/connected'),async snap=>{const connected=snap.val()===true;$('connBadge').textContent=connected?'connesso':'riconnessione...';if(connected&&meRef)await armDisconnect()});
+      if(participantMetaStop)participantMetaStop();participantMetaStop=onValue(ref(db,`rooms/${room}/meta`),snap=>{const m=snap.val();const disabled=!m||m.archived===true||m.isOpen!==true;$('presentBtn').disabled=disabled;$('awayBtn').disabled=disabled;$('renameBtn').disabled=disabled;if(m)$('participantRoomTitle').textContent=m.title||'';renderParticipantTimer(m?.breakEndsAt||null);if(disabled)$('participantTimerNote').textContent='La stanza è stata archiviata dal docente.'});
+    }catch(err){console.error(err);alert(`Errore: ${err.message}`)}
   };
 
-  if(initFirebase()){
-    onAuthStateChanged(auth, user => {
-      if(!user || user.isAnonymous){
-        $('teacherLoginCard').classList.remove('hidden');
-        $('teacherControlCard').classList.add('hidden');
-        $('dashboardCard').classList.add('hidden');
-        return;
-      }
-      $('teacherLoginCard').classList.add('hidden');
-      $('teacherControlCard').classList.remove('hidden');
-      $('dashboardCard').classList.remove('hidden');
-      $('teacherIdentity').textContent = `Docente: ${user.email || user.uid}`;
-      $('connBadge').textContent = 'docente connesso';
-    });
+  async function setStatus(status){if(!meRef)return;const old=(await get(meRef)).val()||{};await set(meRef,{nick:activeParticipantNick,status,updatedAt:serverTimestamp(),joinedAt:old.joinedAt||serverNow()});await armDisconnect()}
+  $('presentBtn').onclick=()=>setStatus('present');$('awayBtn').onclick=()=>setStatus('away');
+  $('renameBtn').onclick=()=>{$('renameInput').value=activeParticipantNick;$('renameBox').classList.remove('hidden');$('renameInput').focus()};
+  $('cancelRenameBtn').onclick=()=>$('renameBox').classList.add('hidden');
+  $('saveRenameBtn').onclick=async()=>{const nick=normNick($('renameInput').value);if(!nick){alert('Inserisci un nickname valido.');return}const old=(await get(meRef)).val()||{};activeParticipantNick=nick;localStorage.setItem('presence_nick',nick);$('nick').value=nick;await set(meRef,{...old,nick,updatedAt:serverTimestamp()});await armDisconnect();$('renameBox').classList.add('hidden')};
+
+  function renderParticipantTimer(end){participantTimerInterval=stopInterval(participantTimerInterval);if(!end){$('participantTimerBox').classList.add('hidden');return}$('participantTimerBox').classList.remove('hidden');const tick=()=>{const rem=end-serverNow();if(rem>0){$('participantTimerLabel').textContent='La pausa termina tra';$('participantTimer').classList.remove('ended');$('participantTimer').textContent=fmtCountdown(rem);$('participantTimerNote').textContent='Quando rientri, premi “Sono presente”.'}else{$('participantTimerLabel').textContent='';$('participantTimer').classList.add('ended');$('participantTimer').textContent='Pausa terminata';$('participantTimerNote').textContent='Segnala il tuo rientro.'}};tick();participantTimerInterval=setInterval(tick,250)}
+
+  $('teacherLoginBtn').onclick=async()=>{try{if(!initFirebase())return;if(auth.currentUser)await signOut(auth);const email=$('teacherEmail').value.trim(),password=$('teacherPassword').value;if(!email||!password){alert('Inserisci email e password docente.');return}await signInWithEmailAndPassword(auth,email,password);$('teacherPassword').value=''}catch(err){console.error(err);alert('Accesso docente non riuscito.')}};
+  if(initFirebase())onAuthStateChanged(auth,user=>{if(!user||user.isAnonymous){$('teacherLoginCard').classList.remove('hidden');$('teacherWorkspace').classList.add('hidden');stopTeacherListeners();return}$('teacherLoginCard').classList.add('hidden');$('teacherWorkspace').classList.remove('hidden');$('teacherIdentity').textContent=`Docente: ${user.email||user.uid}`;$('connBadge').textContent='docente connesso';startRoomsList()});
+  $('teacherLogoutBtn').onclick=async()=>{if(auth)await signOut(auth);activeTeacherRoom=null;clearSelectedRoom()};
+
+  function stopTeacherListeners(){if(roomsStop){roomsStop();roomsStop=null}if(teacherPeopleStop){teacherPeopleStop();teacherPeopleStop=null}if(teacherMetaStop){teacherMetaStop();teacherMetaStop=null}teacherStatsInterval=stopInterval(teacherStatsInterval);roomsRenderInterval=stopInterval(roomsRenderInterval)}
+  function startRoomsList(){if(roomsStop)roomsStop();roomsStop=onValue(ref(db,'rooms'),snap=>{roomsCache=snap.val()||{};renderRoomsList(roomsCache)});roomsRenderInterval=stopInterval(roomsRenderInterval);roomsRenderInterval=setInterval(()=>renderRoomsList(roomsCache),1000)}
+  function renderRoomsList(rooms){
+    const entries=Object.entries(rooms).sort((a,b)=>(b[1]?.meta?.createdAt||0)-(a[1]?.meta?.createdAt||0));$('roomsList').innerHTML='';
+    if(!entries.length){$('roomsList').innerHTML='<div class="mutedbox">Nessuna stanza creata.</div>';return}
+    for(const [code,data] of entries){const people=Object.values(data.participants||{}),present=people.filter(p=>p.status==='present').length,meta=data.meta||{};const el=document.createElement('div');el.className='roomitem'+(activeTeacherRoom===code?' selected':'');el.dataset.code=code;el.innerHTML=`<div><div class="name"></div><div class="small"></div></div><span class="pill ${roomStatusClass(meta)}">${roomStatus(meta)}</span>`;el.querySelector('.name').textContent=meta.title?`${code} · ${meta.title}`:code;el.querySelector('.small').textContent=`${present}/${people.length} presenti`;el.onclick=()=>watchRoom(code);$('roomsList').appendChild(el)}
   }
 
-  $('teacherLogoutBtn').onclick = async () => {
-    if(auth) await signOut(auth);
-    activeTeacherRoom = null;
-    if(teacherPeopleStop) teacherPeopleStop();
-    if(teacherMetaStop) teacherMetaStop();
-    $('peopleList').innerHTML = '';
-    $('presentCount').textContent = '0';
-    $('totalCount').textContent = '0';
-  };
+  $('createRoomBtn').onclick=async()=>{try{if(!auth?.currentUser||auth.currentUser.isAnonymous)return;const room=normRoom($('newRoomCode').value),title=$('newRoomTitle').value.trim().slice(0,80);if(!room){alert('Inserisci il codice stanza.');return}const existing=(await get(ref(db,`rooms/${room}/meta`))).val();if(existing&&!confirm(`La stanza ${room} esiste già. Vuoi selezionarla?`)){return}if(!existing){await set(ref(db,`rooms/${room}/meta`),{isOpen:true,archived:false,title,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),createdBy:auth.currentUser.uid,totalPausedMs:0,breakStartedAt:null,breakEndsAt:null})}await watchRoom(room);$('newRoomCode').value='';$('newRoomTitle').value=''}catch(err){console.error(err);alert(`Impossibile creare la stanza: ${err.message}`)}};
 
-  $('openRoomBtn').onclick = async () => {
-    try{
-      if(!auth?.currentUser || auth.currentUser.isAnonymous){ alert('Accedi come docente.'); return; }
-      const room = normRoom($('adminRoom').value);
-      if(!room){ alert('Inserisci il codice stanza.'); return; }
-      const title = $('roomTitle').value.trim().slice(0,80);
-      await update(ref(db, `rooms/${room}/meta`), {
-        isOpen:true,
-        title,
-        updatedAt:serverTimestamp(),
-        createdBy:auth.currentUser.uid
-      });
-      $('shareLink').value = roomLink(room);
-      await watchRoom(room);
-    }catch(err){
-      console.error(err);
-      alert(`Impossibile aprire la stanza: ${err.message}`);
-    }
-  };
+  function clearSelectedRoom(){activeTeacherRoom=null;activeTeacherMeta=null;activeTeacherPeople={};$('noRoomSelected').classList.remove('hidden');$('roomControlContent').classList.add('hidden');$('participantsPlaceholder').classList.remove('hidden');$('participantsContent').classList.add('hidden');if(teacherPeopleStop)teacherPeopleStop();if(teacherMetaStop)teacherMetaStop();teacherStatsInterval=stopInterval(teacherStatsInterval)}
+  async function watchRoom(room){activeTeacherRoom=room;renderRoomsList(roomsCache);$('noRoomSelected').classList.add('hidden');$('roomControlContent').classList.remove('hidden');$('participantsPlaceholder').classList.add('hidden');$('participantsContent').classList.remove('hidden');$('selectedRoomCode').textContent=`Codice stanza: ${room}`;$('shareLink').value=roomLink(room);if(teacherPeopleStop)teacherPeopleStop();teacherPeopleStop=onValue(ref(db,`rooms/${room}/participants`),snap=>{activeTeacherPeople=snap.val()||{};renderPeople(activeTeacherPeople);maybePersistFirstEntry();renderTeacherStats()});if(teacherMetaStop)teacherMetaStop();teacherMetaStop=onValue(ref(db,`rooms/${room}/meta`),snap=>{activeTeacherMeta=snap.val()||{};$('selectedRoomTitle').value=activeTeacherMeta.title||'';renderTeacherTimer(activeTeacherMeta.breakEndsAt||null);maybePersistFirstEntry();renderTeacherStats()});teacherStatsInterval=stopInterval(teacherStatsInterval);teacherStatsInterval=setInterval(renderTeacherStats,1000)}
+  async function maybePersistFirstEntry(){if(!activeTeacherRoom||!activeTeacherMeta||activeTeacherMeta.firstEntryAt)return;const times=Object.values(activeTeacherPeople||{}).map(p=>Number(p.joinedAt)).filter(Number.isFinite);if(!times.length)return;const first=Math.min(...times);try{await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{firstEntryAt:first})}catch(err){console.warn('firstEntryAt:',err)}}
 
-  $('watchBtn').onclick = async () => {
-    const room = normRoom($('adminRoom').value);
-    if(!room){ alert('Inserisci il codice stanza.'); return; }
-    await watchRoom(room);
-  };
+  function renderPeople(obj){const vals=Object.values(obj||{}).sort((a,b)=>(b.status==='present')-(a.status==='present')||(a.nick||'').localeCompare(b.nick||'')),present=vals.filter(v=>v.status==='present').length;$('presentCount').textContent=present;$('totalCount').textContent=vals.length;$('allBackNotice').classList.toggle('hidden',!(vals.length>0&&present===vals.length));$('peopleList').innerHTML='';for(const p of vals){const el=document.createElement('div');el.className='person';el.innerHTML=`<div><div class="name"></div><div class="small">Ultimo aggiornamento: ${fmtDateTime(p.updatedAt)}</div></div><span class="pill ${p.status==='present'?'on':'off'}">${p.status==='present'?'Presente':'Assente'}</span>`;el.querySelector('.name').textContent=p.nick||'Senza nome';$('peopleList').appendChild(el)}}
 
-  async function watchRoom(room){
-    activeTeacherRoom = room;
-    $('adminRoom').value = room;
-    $('shareLink').value = roomLink(room);
-    if(teacherPeopleStop) teacherPeopleStop();
-    teacherPeopleStop = onValue(ref(db, `rooms/${room}/participants`), snap => renderPeople(snap.val()));
-    if(teacherMetaStop) teacherMetaStop();
-    teacherMetaStop = onValue(ref(db, `rooms/${room}/meta`), snap => {
-      const m = snap.val();
-      if(m?.title !== undefined) $('roomTitle').value = m.title || '';
-      renderTeacherTimer(m?.breakEndsAt || null);
-    });
-  }
+  function effectivePauseMs(meta,now){let total=Number(meta?.totalPausedMs)||0;if(meta?.breakStartedAt){const end=Math.min(now,Number(meta.breakEndsAt)||now);if(end>meta.breakStartedAt)total+=end-meta.breakStartedAt}return Math.max(0,total)}
+  function roomEndTime(meta,now){return meta?.archivedAt||now}
+  function renderTeacherStats(){if(!activeTeacherRoom||!activeTeacherMeta)return;const now=serverNow(),meta=activeTeacherMeta,created=Number(meta.createdAt)||null,people=Object.values(activeTeacherPeople||{}),firstEntry=people.map(p=>Number(p.joinedAt)||Infinity).reduce((a,b)=>Math.min(a,b),Infinity);const end=roomEndTime(meta,now),total=created?Math.max(0,end-created):null,pause=created?Math.min(total,effectivePauseMs(meta,end)):null,active=total==null?null:Math.max(0,total-pause),storedFirst=Number(meta.firstEntryAt);$('statCreatedAt').textContent=fmtDateTime(created);$('statFirstEntry').textContent=Number.isFinite(storedFirst)&&storedFirst>0?fmtDateTime(storedFirst):(Number.isFinite(firstEntry)?fmtDateTime(firstEntry):'—');$('statTotalTime').textContent=fmtDuration(total);$('statPauseTime').textContent=fmtDuration(pause);$('statActiveTime').textContent=fmtDuration(active);$('statRoomStatus').textContent=roomStatus(meta);const archived=meta.archived===true;$('archiveRoomBtn').disabled=archived;$('saveRoomTitleBtn').disabled=false;$('startBreakBtn').disabled=archived;$('endBreakBtn').disabled=archived||!meta.breakStartedAt}
 
-  function renderPeople(obj){
-    const vals = Object.values(obj || {}).sort((a,b) =>
-      (b.status === 'present') - (a.status === 'present') || (a.nick||'').localeCompare(b.nick||'')
-    );
-    const present = vals.filter(v => v.status === 'present').length;
-    $('presentCount').textContent = present;
-    $('totalCount').textContent = vals.length;
-    $('allBackNotice').classList.toggle('hidden', !(vals.length > 0 && present === vals.length));
-    $('peopleList').innerHTML = '';
-    for(const p of vals){
-      const el = document.createElement('div');
-      el.className = 'person';
-      el.innerHTML = `<div><div class="name"></div><div class="small">Ultimo aggiornamento: ${fmtUpdatedAt(p.updatedAt)}</div></div><span class="pill ${p.status==='present'?'on':'off'}">${p.status==='present'?'Presente':'Assente'}</span>`;
-      el.querySelector('.name').textContent = p.nick || 'Senza nome';
-      $('peopleList').appendChild(el);
-    }
-  }
+  async function settlePause(room,meta){if(!meta?.breakStartedAt)return Number(meta?.totalPausedMs)||0;const now=serverNow(),effectiveEnd=Math.min(now,Number(meta.breakEndsAt)||now),elapsed=Math.max(0,effectiveEnd-Number(meta.breakStartedAt));const total=(Number(meta.totalPausedMs)||0)+elapsed;await update(ref(db,`rooms/${room}/meta`),{totalPausedMs:total,breakStartedAt:null,breakEndsAt:effectiveEnd,updatedAt:serverTimestamp()});return total}
 
-  $('closeRoomBtn').onclick = async () => {
-    const room = activeTeacherRoom || normRoom($('adminRoom').value);
-    if(!room) return;
-    if(!confirm(`Chiudere la stanza ${room}?`)) return;
-    await update(ref(db, `rooms/${room}/meta`), {isOpen:false, breakEndsAt:null, updatedAt:serverTimestamp()});
-  };
+  $('saveRoomTitleBtn').onclick=async()=>{if(!activeTeacherRoom)return;const title=$('selectedRoomTitle').value.trim().slice(0,80);await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{title,updatedAt:serverTimestamp()})};
+  $('archiveRoomBtn').onclick=async()=>{if(!activeTeacherRoom)return;if(!confirm(`Archiviare la stanza ${activeTeacherRoom}? I partecipanti non potranno più usarla.`))return;await settlePause(activeTeacherRoom,activeTeacherMeta);await update(ref(db,`rooms/${activeTeacherRoom}/meta`),{archived:true,isOpen:false,archivedAt:serverTimestamp(),breakStartedAt:null,breakEndsAt:null,updatedAt:serverTimestamp()})};
 
-  $('startBreakBtn').onclick = async () => {
-    const room = activeTeacherRoom || normRoom($('adminRoom').value);
-    if(!room){ alert('Apri o osserva prima una stanza.'); return; }
-    const minutes = Math.max(1, Math.min(90, Number($('breakMinutes').value) || 15));
-    const endsAt = serverNow() + minutes * 60_000;
+  $('startBreakBtn').onclick=async()=>{const room=activeTeacherRoom;if(!room||activeTeacherMeta?.archived)return;await settlePause(room,activeTeacherMeta);const mins=Math.max(1,Math.min(90,Number($('breakMinutes').value)||15)),start=serverNow(),end=start+mins*60000,people=activeTeacherPeople||{},updates={};for(const uid of Object.keys(people)){updates[`rooms/${room}/participants/${uid}/status`]='away';updates[`rooms/${room}/participants/${uid}/updatedAt`]=start}updates[`rooms/${room}/meta/breakStartedAt`]=start;updates[`rooms/${room}/meta/breakEndsAt`]=end;updates[`rooms/${room}/meta/isOpen`]=true;updates[`rooms/${room}/meta/updatedAt`]=start;await update(ref(db),updates)};
+  $('endBreakBtn').onclick=async()=>{if(!activeTeacherRoom)return;await settlePause(activeTeacherRoom,activeTeacherMeta)};
+  function renderTeacherTimer(end){teacherTimerInterval=stopInterval(teacherTimerInterval);if(!end){$('teacherTimerBox').classList.add('hidden');return}$('teacherTimerBox').classList.remove('hidden');const tick=()=>{const rem=end-serverNow();$('teacherTimer').textContent=fmtCountdown(rem);$('teacherTimerNote').textContent=rem>0?'Rientro in corso.':'Pausa terminata.'};tick();teacherTimerInterval=setInterval(tick,250)}
 
-    const peopleSnap = await get(ref(db, `rooms/${room}/participants`));
-    const people = peopleSnap.val() || {};
-    const updates = {};
-    for(const uid of Object.keys(people)){
-      updates[`rooms/${room}/participants/${uid}/status`] = 'away';
-      updates[`rooms/${room}/participants/${uid}/updatedAt`] = serverNow();
-    }
-    updates[`rooms/${room}/meta/breakEndsAt`] = endsAt;
-    updates[`rooms/${room}/meta/isOpen`] = true;
-    updates[`rooms/${room}/meta/updatedAt`] = serverNow();
-    await update(ref(db), updates);
-  };
+  $('resetBtn').onclick=async()=>{if(!activeTeacherRoom)return;if(confirm(`Cancellare tutti i partecipanti registrati nella stanza ${activeTeacherRoom}?`))await remove(ref(db,`rooms/${activeTeacherRoom}/participants`))};
+  $('copyLinkBtn').onclick=async()=>{const text=$('shareLink').value;if(!text)return;await navigator.clipboard.writeText(text);const old=$('copyLinkBtn').textContent;$('copyLinkBtn').textContent='Copiato';setTimeout(()=>$('copyLinkBtn').textContent=old,1200)};
 
-  $('endBreakBtn').onclick = async () => {
-    const room = activeTeacherRoom || normRoom($('adminRoom').value);
-    if(!room) return;
-    await update(ref(db, `rooms/${room}/meta`), {breakEndsAt:null, updatedAt:serverTimestamp()});
-  };
-
-  function renderTeacherTimer(breakEndsAt){
-    teacherTimerInterval = stopInterval(teacherTimerInterval);
-    if(!breakEndsAt){
-      $('teacherTimerBox').classList.add('hidden');
-      return;
-    }
-    $('teacherTimerBox').classList.remove('hidden');
-    const tick = () => {
-      const remaining = breakEndsAt - serverNow();
-      $('teacherTimer').textContent = fmtTime(remaining);
-      $('teacherTimerNote').textContent = remaining > 0 ? 'Rientro in corso.' : 'Pausa terminata.';
-    };
-    tick();
-    // Aggiornamento solo locale: nessuna chiamata Firebase aggiuntiva.
-    teacherTimerInterval = setInterval(tick,250);
-  }
-
-  $('resetBtn').onclick = async () => {
-    const room = activeTeacherRoom || normRoom($('adminRoom').value);
-    if(!room) return;
-    if(confirm(`Cancellare tutti i partecipanti registrati nella stanza ${room}?`)){
-      await remove(ref(db, `rooms/${room}/participants`));
-    }
-  };
-
-  $('copyLinkBtn').onclick = async () => {
-    const text = $('shareLink').value;
-    if(!text) return;
-    await navigator.clipboard.writeText(text);
-    const old = $('copyLinkBtn').textContent;
-    $('copyLinkBtn').textContent = 'Copiato';
-    setTimeout(() => $('copyLinkBtn').textContent = old, 1200);
-  };
-
-  if(!configured){
-    $('connBadge').textContent = 'configurazione Firebase richiesta';
-  }
+  if(!configured)$('connBadge').textContent='configurazione Firebase richiesta';
 </script>
 </body>
 </html>
