@@ -85,7 +85,7 @@
   </div>
 
   <div class="tabs">
-    <button class="btn primary" id="participantModeBtn">Partecipo</button>
+    <button class="btn primary" id="participantModeBtn">Partecipante</button>
     <button class="btn ghost" id="teacherModeBtn">Docente</button>
   </div>
 
@@ -217,7 +217,7 @@
     </div>
   </div>
 
-  <div class="footer">GitHub Pages + Firebase Authentication + Realtime Database · v2.5</div>
+  <div class="footer">GitHub Pages + Firebase Authentication + Realtime Database · v2.6</div>
 </div>
 
 <script type="module">
@@ -486,6 +486,7 @@
   if(initFirebase()){
     onAuthStateChanged(auth,async user=>{
       if(!user||user.isAnonymous){
+        document.querySelector(".tabs").classList.remove("hidden");
         $("teacherLoginCard").classList.remove("hidden");
         $("teacherWorkspace").classList.add("hidden");
         stopTeacherListeners();
@@ -496,6 +497,7 @@
       const authorized=await authorizeTeacher(user);
 
       if(!authorized){
+        document.querySelector(".tabs").classList.remove("hidden");
         stopTeacherListeners();
         $("teacherWorkspace").classList.add("hidden");
         $("teacherLoginCard").classList.remove("hidden");
@@ -505,6 +507,8 @@
         return;
       }
 
+      document.querySelector(".tabs").classList.add("hidden");
+      switchMode("teacher");
       $("teacherAuthError").classList.add("hidden");
       $("teacherLoginCard").classList.add("hidden");
       $("teacherWorkspace").classList.remove("hidden");
@@ -518,6 +522,8 @@
     if(auth)await signOut(auth);
     activeTeacherRoom=null;
     clearSelectedRoom();
+    document.querySelector(".tabs").classList.remove("hidden");
+    switchMode("participant");
   };
 
   function stopTeacherListeners(){
